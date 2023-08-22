@@ -4,6 +4,7 @@ import { ironSessionCookieOptions } from "../../constants";
 import { getLoggingInUser } from "../../lib/users";
 import { CookieUser } from "../../types";
 import { setTimeout } from 'timers/promises'
+import { translateUserRecordToInterface } from "../../util/translators/user";
 
 export default withIronSessionApiRoute(
 
@@ -16,10 +17,7 @@ export default withIronSessionApiRoute(
         res.status(401).send({});
     }
     else {
-        req.session.user = {
-            userId: user.userId,
-            email: user.email,
-        }
+        req.session.user = translateUserRecordToInterface(user);
         await req.session.save();
         res.send({dashboard: `/u/${user.email}`});
     }

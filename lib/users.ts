@@ -10,7 +10,7 @@ where  lower(u.email) = lower(?);
 `
 
 const INSERT_USER_SQL = `
-insert into User(userId, email, hash) values(NULL, ?, ?);
+insert into User values(NULL, ?, ?, ?, ?);
 `
 
 export async function getLoggingInUser(email: string, password: string): Promise<UserRecord | undefined> {
@@ -28,14 +28,14 @@ export async function getLoggingInUser(email: string, password: string): Promise
 
 }
 
-export async function insertNewUser(email: string, password: string): Promise<void> {
+export async function insertNewUser(email: string, password: string, locale: string, timezone: string): Promise<void> {
   const existingUser = await getUser(email);
   if (existingUser) {
     throw new Error(`Error inserting into users!  Email ${email} already exists!`);
   }
 
   const hashedPassword = await argon2.hash(password);
-  return db.promise().query<ResultSetHeader>(INSERT_USER_SQL, [email.toLowerCase(), hashedPassword])
+  return db.promise().query<ResultSetHeader>(INSERT_USER_SQL, [email.toLowerCase(), hashedPassword, locale, timezone])
   .then(async ([rows,fields]) => {
     if (rows.affectedRows === 1) {
         return;

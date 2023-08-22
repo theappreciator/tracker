@@ -14,3 +14,6 @@ export const ironSessionCookieOptions: IronSessionOptions = {
     maxAge: EFFECTIVELY_FOREVER_IN_SECONDS
   },
 }
+
+export const DEFAULT_USER_LOCALE = 'en-US';
+export const DEFAULT_USER_TIMEZONE = 'America/New_York';

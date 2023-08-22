@@ -3,12 +3,16 @@ import { RowDataPacket } from "mysql2";
 export type CookieUser = {
   userId: number;
   email: string;
+  locale: string;
+  timezone: string;
 }
 
 export type UserRecord = RowDataPacket & {
   userId: number;
   email: string;
   hash: string;
+  locale: string;
+  timezone: string;
 }
 
 export type ThingRecord = RowDataPacket & {

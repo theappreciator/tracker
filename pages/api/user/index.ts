@@ -1,6 +1,6 @@
 import { IronSession } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
-import { ironSessionCookieOptions } from "../../../constants";
+import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE, ironSessionCookieOptions } from "../../../constants";
 import { NextApiRequest, NextApiResponse } from "next";
 import { insertNewUser } from "../../../lib/users";
 import * as EmailValidator from 'email-validator';
@@ -62,7 +62,7 @@ async function doPost(req: NextApiRequest, res: NextApiResponse<any>) {
       return;
     }
 
-    await insertNewUser(newEmail, newPassword);
+    await insertNewUser(newEmail, newPassword, DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE);
 
     res.status(200).send({});
   }

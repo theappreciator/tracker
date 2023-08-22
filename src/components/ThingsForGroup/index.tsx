@@ -14,7 +14,8 @@ export default function ThingsForGroup(
 }: {
   children?: React.ReactNode
   groupName: string,
-  things: IThing[],}
+  things: IThing[],
+}
 ) {  
 
   const { didFirstLoad, setNeedsReload } = useGlobalContext();
