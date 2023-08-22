@@ -3,33 +3,59 @@ import { ThingRecord } from '../types'
 import { db } from './database';
 
 const THINGS_TODAY_SQL = `
+select     x.userId,
+           x.thingId,
+           x.thingGroupId,
+           x.groupName,
+           x.thingName,
+           x.date,
+           sum(coalesce(x.count, 0)) as "count"
+from (
 select     u.userId,
            t.thingId,
+           tg.thingGroupId,
            tg.name as groupName,
            t.name as thingName,
-		   DATE_FORMAT(date(CONVERT_TZ(coalesce(th.time, current_timestamp()), 'UTC', 'America/New_York')), '%Y/%m/%d') as date,
-		   sum(coalesce(th.change, 0)) as "count"
+		   DATE_FORMAT(date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')), '%Y/%m/%d') as date,
+		   th.change as "count"
 from       User u
 inner join ThingGroup tg
         on u.userId = tg.userId
 inner join Thing t
         on tg.thingGroupId = t.thingGroupId
-left join  ThingHistory th
+	   and t.thingId in (select thingId from ThingAction)
+inner join  ThingHistory th
         on t.thingId = th.thingId
        and date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL 7 DAY
        and date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
-where      u.userId = ?
-group by   u.userId,
+union all
+select     u.userId,
            t.thingId,
-           tg.name,
-           t.name,
-           DATE_FORMAT(date(CONVERT_TZ(coalesce(th.time, current_timestamp()), 'UTC', 'America/New_York')), '%Y/%m/%d')
-order by   1, 5 desc, 3, 2;
+           tg.thingGroupId,
+           tg.name as groupName,
+           t.name as thingName,
+		   DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y/%m/%d') as date,
+		   null
+from       User u
+inner join ThingGroup tg
+        on u.userId = tg.userId
+inner join Thing t
+        on tg.thingGroupId = t.thingGroupId
+	   and t.thingId in (select thingId from ThingAction)
+) x
+where      x.userId = ?
+group by   x.userId,
+           x.thingId,
+           x.thingGroupId,
+           x.groupName,
+           x.thingName,
+           x.date
 `
 
 const THINGS_ALL_SQL = `
 select     u.userId,
            t.thingId,
+           tg.thingGroupId,
            tg.name as groupName,
            t.name as thingName,
            DATE_FORMAT(coalesce(date(th.time), current_date), '%Y/%m/%d') as date,

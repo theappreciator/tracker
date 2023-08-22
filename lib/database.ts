@@ -9,7 +9,7 @@ var usingFlyRegion = process.env.FLY_REGION ?? "unknown" // e.g "lhr"
 var usingPrimaryRegion = (process.env.FLY_REGION === process.env.PRIMARY_REGION);
 
 // 3. which database should be connected to?
-var databaseUrl = process.env.DATABASE_URL; // first: assume no choice and there's only one
+var databaseUrl = process.env.DATABASE_URL_RW; // first: assume no choice and there's only one
 if (!databaseUrl) {
     throw new Error("Could not get database connectiong string!");
 }

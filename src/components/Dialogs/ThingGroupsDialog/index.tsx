@@ -3,9 +3,11 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Dialo
 import { useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { ActionRecord, IAction, IThing, IThingGroup } from "../../../../types";
+import { IAction, IThing, IThingGroup } from "../../../../types";
 import ThingActionsDialog from "../ThingActionsDialog";
 import InputDialog from "../InputDialog";
+import ListDialog, { GroupRowItem, HeaderItem, RowItem } from "../ListDialog";
+import { useGlobalContext } from "../../../context";
 
 
 
@@ -14,19 +16,20 @@ export default function ThingGroupsDialog(
   isVisible,
   actions,
   thingGroup,
-  onCancel,
+  onClose,
 //   onSave,
 }: {
   isVisible: boolean,
   actions: IAction[],
   thingGroup: IThingGroup,
-  onCancel: () => void,
+  onClose: () => void,
 //   onSave: (groupName: string) => Promise<boolean>,
 }
 ) {
 
   const [selectedThing, setSelectedThing] = useState<IThing>();
   const [showNewThingDialog, setShowNewThingDialog] = useState(false);
+  const { setNeedsReload } = useGlobalContext();
 
 
   const [isSaving, setSaving] = useState(false);
@@ -44,8 +47,8 @@ export default function ThingGroupsDialog(
       },
       body: JSON.stringify(payload)
     });
-    // const newGroupsAndThings: IThingGroup[] = await response.json();
-    // setGroupsAndThings(newGroupsAndThings);
+
+    setNeedsReload(true);
   }
 
   const handleAddThingClick = () => {
@@ -53,8 +56,6 @@ export default function ThingGroupsDialog(
   }
 
   const handleAddThingSave = async (groupName: string): Promise<boolean> => {
-    console.log("We should save the thing", groupName);
-
     let success = false;
     await saveThingName(groupName)
     .then(() => {
@@ -72,26 +73,43 @@ export default function ThingGroupsDialog(
     setShowNewThingDialog(false);
   }
   
-  const handleCancelClick = () => {
-    onCancel();
+  const handleCloseClick = () => {
+    onClose();
   }
 
-  const handleThingDetailClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const thingId = event.currentTarget.dataset.thingid;
-    if (thingId) {
-      const thing = thingGroup.things.find(t => t.thingId.toString() === thingId );
-      if (thing) {
-        setSelectedThing(thing);
-      }
+  const handleThingDetailClick = (rowItem: RowItem) => {
+    const thing = thingGroup.things.find(t => t.thingId.toString() === rowItem.id);
+    if (thing) {
+      setSelectedThing(thing);
     }
   }
 
   const handleThingActionsSave = async () => {
     setSelectedThing(undefined);
+    setNeedsReload(true);
+    onClose();
   }
 
   const handleThingActionsCancel = () => {
     setSelectedThing(undefined);
+  }
+
+  const rowItems: RowItem[] = thingGroup.things.map(thing => {
+    return {
+      id: thing.thingId.toString(),
+      leftText: thing.thingName,
+      rightText: `${thing.actions.length} Actions`,
+      onDetailClick: handleThingDetailClick,
+    }
+  });
+  
+  const groupRowItem: GroupRowItem = {
+    rows: rowItems,
+  }
+
+  const headerItem: HeaderItem = {
+    title: ["...", thingGroup.groupName, "Things"],
+    onDetailClick: handleAddThingClick
   }
 
   return (
@@ -99,6 +117,9 @@ export default function ThingGroupsDialog(
       {showNewThingDialog && (
         <InputDialog 
           isVisible={showNewThingDialog}
+          title={"New Thing"}
+          subtitle={"Please enter a new Thing name to track."}
+          label={"Thing Name"}
           onCancel={handleAddThingCancel}
           onSave={handleAddThingSave}
         />
@@ -112,7 +133,13 @@ export default function ThingGroupsDialog(
           onSave={handleThingActionsSave}
         />
       )}
-      <Dialog
+      <ListDialog
+        isVisible={isVisible}
+        headerItem={headerItem}
+        onClose={handleCloseClick}
+        groupRowItems={[groupRowItem]}
+      />
+      {/* <Dialog
         open={isVisible}
         onClose={handleCancelClick}
         fullWidth={true}
@@ -125,17 +152,17 @@ export default function ThingGroupsDialog(
             component="div"
             sx={{ flexGrow: 1 }}
           >
-            <Breadcrumbs separator="›" aria-label="breadcrumb">
-              <Typography key="1" color="inherit">
-                Groups
-              </Typography>,
-              <Typography key="2" color="inherit">
-                {thingGroup.groupName}
-              </Typography>,
-              <Typography key="3" color="text.primary">
-                Things
-              </Typography>,
-            </Breadcrumbs>
+          <Breadcrumbs separator="/" aria-label="breadcrumb">
+            <Typography key="1" color="inherit">
+              ...
+            </Typography>,
+            <Typography key="2" color="inherit">
+              {thingGroup.groupName}
+            </Typography>,
+            <Typography key="3" color="text.primary">
+              Things
+            </Typography>,
+          </Breadcrumbs>
           </Typography>
           <IconButton sx={{ }} aria-label="delete" size="large" onClick={handleAddThingClick}>
             <AddIcon fontSize="inherit" />
@@ -160,9 +187,9 @@ export default function ThingGroupsDialog(
           })}
           </DialogContent>
         <DialogActions>
-          <Button onClick={handleCancelClick}>Cancel</Button>
+          <Button variant="text" onClick={handleCancelClick}>Close</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   )
 }

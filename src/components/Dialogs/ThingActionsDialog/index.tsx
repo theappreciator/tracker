@@ -50,7 +50,6 @@ export default function ThingActionsDialog(
     // setGroupname('');
 
     const actionsToSave = Object.entries(actionStates).filter(([k, v]) => v).map(([key, val]) => parseInt(key));
-    console.log(actionsToSave);
 
     const payload = {
       thingId: thing?.thingId,
@@ -89,9 +88,9 @@ export default function ThingActionsDialog(
           component="div"
           sx={{ flexGrow: 1 }}
         >
-          <Breadcrumbs separator="›" aria-label="breadcrumb">
+          <Breadcrumbs separator="/" aria-label="breadcrumb">
             <Typography key="1" color="inherit">
-              Things
+              ...
             </Typography>,
             <Typography key="2" color="inherit">
               {thing?.thingName}
@@ -133,6 +132,7 @@ export default function ThingActionsDialog(
               >
                 <ThingAction
                   key={`action-${action.actionId}`}
+                  thingId={thing!.thingId}
                   actionValue={action.value}
                 >
                   {action.name}

@@ -9,18 +9,19 @@ export default function ThingAction(
   onClick,
 }: {
   children?: React.ReactNode,
-  thingId?: number,
-  actionValue?: number,
-  onClick?: (thingId: number | undefined, count: number | undefined) => Promise<void>,
+  thingId: number,
+  actionValue: number,
+  onClick?: (thingId: number, count: number) => Promise<void>,
 }
 ) { 
 
   const [isLoading, setLoading] = useState(false);
 
-  const handleClick = async (thingId: number | undefined, count: number | undefined) => {
+  const handleClick = async () => {
+    console.log("handling a click");
     if (onClick) {
       setLoading(true);
-      await onClick(thingId, count);
+      await onClick(thingId, actionValue);
       setLoading(false);
     }
   }
@@ -29,7 +30,7 @@ export default function ThingAction(
     <LoadingButton
       loading={isLoading}
       sx={{ paddingLeft: "12px", paddingRight: "12px", minWidth: "40px" }}
-      onClick={() => handleClick(thingId, actionValue)}
+      onClick={handleClick}
       variant="contained"
       color="primary"
     >

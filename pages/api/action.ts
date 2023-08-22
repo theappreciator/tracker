@@ -1,13 +1,9 @@
-import { IronSession } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { ironSessionCookieOptions } from "../../constants";
-import { getLoggingInUser } from "../../lib/users";
-import { CookieUser } from "../../types";
-import { setTimeout } from 'timers/promises'
-import { insertHistoryForThing } from "../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllActions, updateActionsForThing } from "../../lib/actions";
 import { translateActionRecordToInterface } from "../../util/translators/action";
+import { setTimeout } from "timers/promises";
 
 export default withIronSessionApiRoute(
   async function actionRoute(req, res) {
@@ -47,10 +43,8 @@ async function doPost(req: NextApiRequest, res: NextApiResponse<any>) {
     res.status(401).send({});
   }
   else {
-    console.log(req.body);
     const thingId = req.body.thingId;
     const actionIds = req.body.actionIds;
-    console.log(thingId, actionIds);
     await updateActionsForThing(thingId, actionIds)
     res.status(200).send({});
   }

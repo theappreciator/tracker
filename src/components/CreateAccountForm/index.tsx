@@ -31,9 +31,7 @@ export default function CreateAccountForm(
         },
         body: JSON.stringify(payload)
       });
-      console.log("Got a response!", response.status);
       if (response.status === 200) {
-        console.log("about to redirect?");
         onSignInClick();
         return true;
       }

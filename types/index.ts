@@ -14,6 +14,7 @@ export type UserRecord = RowDataPacket & {
 export type ThingRecord = RowDataPacket & {
   userId: number;
   thingId: number;
+  thingGroupId: number;
   groupName: string;
   thingName: string;
   date: string;
@@ -45,6 +46,9 @@ export type ThingGroupRecord = RowDataPacket & {
 export interface IThing {
   thingId: number;
   thingName: string;
+  groupName: string;
+  date?: string;
+  count?: number;
   actions: IAction[]
 }
 
@@ -59,4 +63,9 @@ export interface IThingGroup {
   groupId: number;
   groupName: string;
   things: IThing[];
+}
+
+export interface IDateThingGroup {
+  date: string;
+  groups: IThingGroup[];
 }

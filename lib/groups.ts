@@ -24,8 +24,6 @@ order by   1, 2, 4
 `
 
 export async function insertGroupForUser(userId: number, groupName: string) {
-  console.log("About to enter", userId, groupName);
-
   const existingGroups = await getGroupsWithThingsAndActionsForUser(userId);
   const foundGroup = existingGroups.some(g => g.groupName.toLowerCase() === groupName.toLowerCase());
   if (foundGroup) {

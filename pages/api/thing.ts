@@ -8,6 +8,7 @@ import { insertHistoryForThing } from "../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getTodayThingsForUser, insertNewThingForUser } from "../../lib/things";
 import { getActionsForThings } from "../../lib/actions";
+import { translateThingRecordToInterface } from "../../util/translators/group";
 
 export default withIronSessionApiRoute(
   async function thingRoute(req, res) {
@@ -32,13 +33,11 @@ async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
     res.status(401).send({});
   }
   else {
-    const things = await getTodayThingsForUser(cookiedUser.userId);
-    const actionsForThings = await getActionsForThings(things.map(t => t.thingId));
+    const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
+    const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
+    const things = translateThingRecordToInterface(thingRecords, actionsForThings);
     
-    const payload = {
-      things,
-      actionsForThings,
-    }
+    const payload = things;
     res.status(200).send(payload);
   }
 }

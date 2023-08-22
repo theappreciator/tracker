@@ -1,13 +1,6 @@
-import { IronSession } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
 import { ironSessionCookieOptions } from "../../constants";
-import { getLoggingInUser } from "../../lib/users";
-import { CookieUser } from "../../types";
-import { setTimeout } from 'timers/promises'
-import { insertHistoryForThing } from "../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getTodayThingsForUser } from "../../lib/things";
-import { getActionsForThings } from "../../lib/actions";
 import { getGroupsWithThingsAndActionsForUser, insertGroupForUser } from "../../lib/groups";
 import { translateThingGroupRecordToInterface } from "../../util/translators/group";
 

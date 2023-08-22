@@ -40,7 +40,8 @@ async function doPost(req: NextApiRequest, res: NextApiResponse<any>) {
     return;
   }
 
-  setTimeout(3000);
+  // sleep 3 sec as a way to prevent hammering the login api.  System will run out of resources/memory/connections before meaningfully allowing brute force.
+  await setTimeout(3000);
 
   const secretCode = req.body.secret;
   if (secretCode && secretCode?.toLowerCase() === process.env.NEW_ACCOUNT_SERET_PASSWORD?.toLowerCase()) {

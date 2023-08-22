@@ -14,13 +14,7 @@ insert into User(userId, email, hash) values(NULL, ?, ?);
 `
 
 export async function getLoggingInUser(email: string, password: string): Promise<UserRecord | undefined> {
-  console.log("About to get user");
-  console.log(email);
-  console.log(password);
-
   const user = await getUser(email);
-  console.log("about to verify");
-  console.log(user);
   if (!user) {
     return undefined;
   }

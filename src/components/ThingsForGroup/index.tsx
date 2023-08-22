@@ -1,7 +1,6 @@
-import { LoadingButton } from "@mui/lab";
 import { Grid, Skeleton } from "@mui/material";
 import ThingForAction from "../ThingForAction";
-import { ThingActionRecord, ThingRecord } from "../../../types";
+import { IThing } from "../../../types";
 import ThingAction from "../ThingAction";
 import { useGlobalContext } from "../../context";
 import { startOfToday, isEqual } from 'date-fns'
@@ -12,13 +11,10 @@ export default function ThingsForGroup(
   children,
   groupName,
   things,
-  actionsForThings,
 }: {
   children?: React.ReactNode
   groupName: string,
-  things: ThingRecord[],
-  actionsForThings: ThingActionRecord[],
-}
+  things: IThing[],}
 ) {  
 
   const { didFirstLoad, setNeedsReload } = useGlobalContext();
@@ -39,7 +35,6 @@ export default function ThingsForGroup(
     })
     .then(response => {
       setNeedsReload(true);
-      console.log("Got a response!", response);
 
       if (response.status === 200) {
         return true;
@@ -54,6 +49,17 @@ export default function ThingsForGroup(
     });
   }
 
+  const isForToday = (thing: IThing | undefined) => {
+    if (!thing?.date) {
+      return false;
+    }
+    const day = thing.date.split('/')[2];
+    const month = thing.date.split('/')[1];
+    const year = thing.date.split('/')[0];
+    const thingDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+    return isEqual(thingDate, startOfToday());
+  }
+
   return (
     <div>
         <Grid
@@ -62,31 +68,27 @@ export default function ThingsForGroup(
         >
             {!showSkeleton && things.length > 0 && things.map(t => {
                 const thingKey = `thing-${t.thingId}`;
-                const thingActions = actionsForThings.filter(a => a.thingId === t.thingId);
-                const day = t.date.split('/')[2];
-                const month = t.date.split('/')[1];
-                const year = t.date.split('/')[0];
-                const thingDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-                const isThingCountForToday = isEqual(thingDate, startOfToday());
-                return (
-                <Grid item key={thingKey} xs={12} sm={6}>
-                  <ThingForAction thing={t}>
-                    {isThingCountForToday && thingActions.map(a => {
-                      const actionKey = `action-${t.thingId}-${a.actionId}`;
-                      return (
-                        <ThingAction
-                          key={actionKey}
-                          thingId={t.thingId}
-                          actionValue={a.value}
-                          onClick={handleActionClick}
-                        >
-                          {a.name}
-                        </ThingAction>
-                      )
-                    })}
-                  </ThingForAction>
-                </Grid>
-                );
+                if (t.actions.length > 0) {
+                  return (
+                  <Grid item key={thingKey} xs={12} sm={6}>
+                    <ThingForAction thing={t}>
+                      {isForToday(t) && t.actions.map(a => {
+                        const actionKey = `action-${t.thingId}-${a.actionId}`;
+                        return (
+                          <ThingAction
+                            key={actionKey}
+                            thingId={t.thingId}
+                            actionValue={a.value}
+                            onClick={handleActionClick}
+                          >
+                            {a.name}
+                          </ThingAction>
+                        )
+                      })}
+                    </ThingForAction>
+                  </Grid>
+                  );
+                }
             })}
             {showSkeleton && things.map(t => {
               const thingKey = `thing-${t.thingId}`;

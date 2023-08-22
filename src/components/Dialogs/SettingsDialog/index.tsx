@@ -6,6 +6,7 @@ import InputDialog from "../InputDialog";
 import ThingGroupsDialog from "../ThingGroupsDialog";
 import { IAction, IThingGroup } from "../../../../types";
 import { useGlobalContext } from "../../../context";
+import ListDialog, { GroupRowItem, HeaderItem, RowItem } from "../ListDialog";
 
 
 
@@ -20,15 +21,12 @@ export default function SettingsDialog(
   onSave: () => void,
 }
 ) {
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [showNewGroupDialog, setShowNewGroupDialog] = useState(false);
   const [selectedGroupAndThings, setSelectedGroupAndThings] = useState<IThingGroup>();
   const [actions, setActions] = useState<IAction[]>([]);
   const [groupsAndThings, setGroupsAndThings] = useState<IThingGroup[]>([]);
 
   const {needsReload, didFirstLoad, setNeedsReload} = useGlobalContext();
-  console.log(needsReload, didFirstLoad);
 
   const getInitialData = async () => {
     const loadActions = getActions();
@@ -36,8 +34,6 @@ export default function SettingsDialog(
 
     const [newActions, newGroupsAndThings] = await Promise.all([loadActions, loadGroupsAndThings]);
 
-    console.log("initial data");
-    console.log(newGroupsAndThings);
     setGroupsAndThings(newGroupsAndThings);
     setActions(newActions);
   }
@@ -67,26 +63,22 @@ export default function SettingsDialog(
       body: JSON.stringify(payload)
     });
     const newGroupsAndThings: IThingGroup[] = await response.json();
-    console.log("newGroupsAndThings");
-    console.log(newGroupsAndThings);
     setGroupsAndThings(newGroupsAndThings);
   }
 
-  const handleSaveClick = () => {
-    onSave();
-  }
+  // const handleSaveClick = () => {
+  //   onSave();
+  // }
   
   const handleCloseClick = () => {
     onCancel();
   }
 
-  const handleAddGroupClick = () => {
+  const handleAddGroupClick = (groupRowItem: GroupRowItem) => {
     setShowNewGroupDialog(true);
   }
 
   const handleAddGroupSave = async (groupName: string): Promise<boolean> => {
-    console.log("We should save the group", groupName);
-
     let success = false;
     await saveGroupName(groupName)
     .then(() => {
@@ -104,17 +96,14 @@ export default function SettingsDialog(
     setShowNewGroupDialog(false);
   }
 
-  const handleGroupDetailClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const groupId = event.currentTarget.dataset.groupid;
-    if (groupId) {
-      const groupOfThings = groupsAndThings.find(g => g.groupId.toString() === groupId );
-      setSelectedGroupAndThings(groupOfThings);
-    }
+  const handleGroupDetailClick = (rowItem: RowItem) => {
+    const groupOfThings = groupsAndThings.find(g => g.groupId.toString() === rowItem.id);
+    setSelectedGroupAndThings(groupOfThings);
   }
 
-  const handleThingGroupThingsSave = async (thingName: string): Promise<boolean> => {
-    return true;
-  }
+  // const handleThingGroupThingsSave = async (thingName: string): Promise<boolean> => {
+  //   return true;
+  // }
 
   const handleThingGroupThingsCancel = () => {
     setSelectedGroupAndThings(undefined);
@@ -123,17 +112,39 @@ export default function SettingsDialog(
   useEffect(() => {
     if (isVisible || needsReload) {
       getInitialData();
+      setSelectedGroupAndThings(undefined);
     }
   }, [isVisible, needsReload]);
-  
-  console.log("groups and things");
-  console.log(groupsAndThings);
 
+  const rowItems: RowItem[] = groupsAndThings.map(group => {
+    return {
+      id: group.groupId.toString(),
+      leftText: group.groupName,
+      rightText: `${group.things.length} Things`,
+      onDetailClick: handleGroupDetailClick,
+    }
+  });
+  
+  const groupRowItem: GroupRowItem = {
+    id: "1",
+    leftText: "Your Group Items",
+    rightText: undefined,
+    onDetailClick: handleAddGroupClick,
+    rows: rowItems,
+  }
+
+  const headerItem: HeaderItem = {
+    title: "Settings"
+  }
+  
   return (
     <>
       {showNewGroupDialog && (
         <InputDialog 
           isVisible={showNewGroupDialog}
+          title={"New Group"}
+          subtitle={"Please enter a new group name.  Groups will contain Things."}
+          label={"Group Name"}
           onCancel={handleAddGroupCancel}
           onSave={handleAddGroupSave}
         />
@@ -143,10 +154,16 @@ export default function SettingsDialog(
           isVisible={!!selectedGroupAndThings}
           actions={actions}
           thingGroup={selectedGroupAndThings}
-          onCancel={handleThingGroupThingsCancel}
+          onClose={handleThingGroupThingsCancel}
         />
       )}
-      <Dialog
+      <ListDialog
+        isVisible={isVisible}
+        headerItem={headerItem}
+        onClose={handleCloseClick}
+        groupRowItems={[groupRowItem]}
+      />
+      {/* <Dialog
         fullScreen={fullScreen}
         open={isVisible}
         onClose={handleCloseClick}
@@ -196,9 +213,9 @@ export default function SettingsDialog(
           })}
         </DialogContent>
         <DialogActions>
-          <Button variant="contained" onClick={handleCloseClick}>Close</Button>
+          <Button variant="text" onClick={handleCloseClick}>Close</Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
     </>
   )
 }

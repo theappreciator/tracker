@@ -1,7 +1,5 @@
-import { LoadingButton } from "@mui/lab";
 import { Card, CardHeader, Typography, CardActions } from "@mui/material";
-import { ThingRecord, ThingActionRecord } from "../../../types";
-
+import { IThing } from "../../../types";
 
 export default function ThingForAction(
 {
@@ -9,7 +7,7 @@ export default function ThingForAction(
   thing
 }: {
   children: React.ReactNode
-  thing: ThingRecord
+  thing: IThing
 }
 ) {  
   return (
@@ -18,7 +16,7 @@ export default function ThingForAction(
         title={thing.thingName}
         action={
           <Typography sx={{ fontSize: "4rem" }} color="#333">
-          {thing.count}
+            {thing.count}
           </Typography>
         }
         subheader={thing.groupName}
