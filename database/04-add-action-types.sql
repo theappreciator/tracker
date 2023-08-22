@@ -8,3 +8,5 @@ update Action set type = 'count';
 CONTINUE;
 
 insert into Action values(9, 'Success?', 1, 'onoff');
+
+CONTINUE;

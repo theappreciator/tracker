@@ -1,16 +1,19 @@
 import { LoadingButton } from "@mui/lab"
 import { useState } from "react";
+import { ActionType, IAction, IThing } from "../../../types";
 
 export default function ThingAction(
 {
   children,
-  thingId,
-  actionValue,
+  thing,
+  action,
+  color,
   onClick,
 }: {
   children?: React.ReactNode,
-  thingId: number,
-  actionValue: number,
+  thing: IThing,
+  action: IAction,
+  color: "success" | "primary" | "error";
   onClick?: (thingId: number, count: number) => Promise<void>,
 }
 ) { 
@@ -21,7 +24,7 @@ export default function ThingAction(
     console.log("handling a click");
     if (onClick) {
       setLoading(true);
-      await onClick(thingId, actionValue);
+      await onClick(thing.thingId, action.value);
       setLoading(false);
     }
   }
@@ -32,7 +35,7 @@ export default function ThingAction(
       sx={{ paddingLeft: "12px", paddingRight: "12px", minWidth: "40px" }}
       onClick={handleClick}
       variant="contained"
-      color="primary"
+      color={color}
     >
       {children}
     </LoadingButton>

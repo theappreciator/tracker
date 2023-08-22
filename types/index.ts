@@ -26,18 +26,20 @@ export type ThingActionRecord = RowDataPacket & {
   actionId: number;
   name: string;
   value: number;
+  type: ActionType;
 }
 
-export enum ActionRecordType {
+export enum ActionType {
   count = "count",
-  onoff = "onoff"
+  onoff = "onoff",
+  unspecified = "unspecified",
 }
 
 export type ActionRecord = RowDataPacket & {
   actionId: number;
   name: string;
   value: number;
-  type: ActionRecordType;
+  type: ActionType;
 }
 
 export type ThingGroupRecord = RowDataPacket & {
@@ -62,7 +64,7 @@ export interface IAction {
   actionId: number;
   name: string;
   value: number;
-  type: ActionRecordType;
+  type: ActionType;
 }
 
 export interface IThingGroup {

@@ -3,7 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Dialo
 import { useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import { IAction, IThing } from "../../../../types";
+import { ActionType, IAction, IThing } from "../../../../types";
 import ThingAction from "../../ThingAction";
 
 
@@ -26,11 +26,7 @@ export default function ThingActionsDialog(
 
   // const [groupName, setGroupname] = useState('');
   const [isSaving, setSaving] = useState(false);
-  // const [actionStates, setActionSates] = useState(actions.map(a => {
-  //   return {
-  //     actionId: a.actionId, value: a.value, name: a.name, isChecked: thing?.actions.some(t => t.actionId === a.actionId)
-  //   };
-  // }));
+  const [selectedActionType, setSelectedActionType] = useState(ActionType.count);
   const [hasStateChanged, setHasStateChanged] = useState(false);
   const [actionStates, setActionSates] = useState(actions.reduce((acc, cur) => {
     const isChecked = (thing?.actions.some(t => t.actionId === cur.actionId)) || false;
@@ -72,6 +68,14 @@ export default function ThingActionsDialog(
   
   const handleCancelClick = () => {
     onCancel();
+  }
+
+  const handleToggleCountClick = (event: React.MouseEvent<HTMLElement, MouseEvent>, value: any) => {
+    setSelectedActionType(value);
+  }
+
+  const handleToggleOnOffClick = (event: React.MouseEvent<HTMLElement, MouseEvent>, value: any) => {
+    setSelectedActionType(value);
   }
 
   return (
@@ -116,15 +120,15 @@ export default function ThingActionsDialog(
             size="small"
             color="primary"
           >
-            <ToggleButton value="count" aria-label="left aligned">
+            <ToggleButton selected={selectedActionType === ActionType.count} value={ActionType.count} aria-label="left aligned" onClick={handleToggleCountClick}>
               count
             </ToggleButton>
-            <ToggleButton disabled value="on_off" aria-label="centered">
+            <ToggleButton selected={selectedActionType === ActionType.onoff} value={ActionType.onoff} aria-label="centered" onClick={handleToggleOnOffClick}>
               on/off
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
-        {actions.map(action => {
+        {actions.filter(a => a.type === selectedActionType).map(action => {
           return (
             <Box key={`row-action-${action.actionId}`} sx={{ display: "flex", alignItems: "center", margin: 0 }}>
               <Box
@@ -132,8 +136,9 @@ export default function ThingActionsDialog(
               >
                 <ThingAction
                   key={`action-${action.actionId}`}
-                  thingId={thing!.thingId}
-                  actionValue={action.value}
+                  thing={thing as IThing} //TODO is this ok?  Do we really want to allow undefined to come in?
+                  action={action}
+                  color={"primary"}
                 >
                   {action.name}
                 </ThingAction>

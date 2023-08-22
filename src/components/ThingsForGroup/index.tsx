@@ -1,6 +1,6 @@
 import { Grid, Skeleton } from "@mui/material";
 import ThingForAction from "../ThingForAction";
-import { IThing } from "../../../types";
+import { ActionType, IAction, IThing } from "../../../types";
 import ThingAction from "../ThingAction";
 import { useGlobalContext } from "../../context";
 import { startOfToday, isEqual } from 'date-fns'
@@ -60,6 +60,31 @@ export default function ThingsForGroup(
     return isEqual(thingDate, startOfToday());
   }
 
+  const buttonColor = (thing: IThing, action: IAction) => {
+    if (action.type === ActionType.onoff) {
+      if (hasCompleted(thing, action)) {
+        return 'success';
+      }
+      return 'error';
+    }
+
+    return 'primary'
+  }
+
+  const hasCompleted = (thing: IThing, action: IAction) => {
+    switch (action.type) {
+      case ActionType.onoff:
+        if (thing.count && thing.count > 0)
+          return true;
+        else
+          return false;
+        break;
+      case ActionType.count: 
+      default:
+        return undefined
+    }
+  }
+
   return (
     <div>
         <Grid
@@ -77,8 +102,9 @@ export default function ThingsForGroup(
                         return (
                           <ThingAction
                             key={actionKey}
-                            thingId={t.thingId}
-                            actionValue={a.value}
+                            thing={t}
+                            action={a}
+                            color={buttonColor(t, a)}
                             onClick={handleActionClick}
                           >
                             {a.name}

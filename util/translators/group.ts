@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { IAction, IDateThingGroup, IThing, IThingGroup, ThingActionRecord, ThingGroupRecord, ThingRecord } from "../../types";
+import { ActionType, IAction, IDateThingGroup, IThing, IThingGroup, ThingActionRecord, ThingGroupRecord, ThingRecord } from "../../types";
 import { format, startOfToday, sub } from "date-fns";
 
 export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]): IThingGroup[] => {
@@ -17,6 +17,7 @@ export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]
                 actionId: t.actionId,
                 name: "XX",
                 value: 0,
+                type: ActionType.unspecified,
               }
             })
             const foundValue = thingValueArray.find(v=> v.thingId.toString() === thingKey);
@@ -79,6 +80,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
                 actionId: a.actionId,
                 name: a.name,
                 value: a.value,
+                type: a.type,
               }
             });
             const foundThingValue = thingValueArray.find(v=> v.thingId.toString() === thingKey);
@@ -90,7 +92,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
               thingName: foundThingValue.thingName,
               groupName: foundThingValue.groupName,
               date: dateKey,
-              count: foundThingValue.count || 0,
+              count: +foundThingValue.count || 0,
               actions: actions
             };
           })
@@ -109,6 +111,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
                     actionId: a.actionId,
                     name: a.name,
                     value: a.value,
+                    type: a.type,
                   }
                 });
                 const pushThing = {
@@ -155,6 +158,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
                 actionId: a.actionId,
                 name: a.name,
                 value: a.value,
+                type: a.type
               }
             });
 

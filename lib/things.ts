@@ -9,7 +9,7 @@ select     x.userId,
            x.groupName,
            x.thingName,
            x.date,
-           sum(coalesce(x.count, 0)) as "count"
+           (sum(coalesce(x.count, 0)) * 1) as "count"
 from (
 select     u.userId,
            t.thingId,
