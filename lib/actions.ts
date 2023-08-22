@@ -6,7 +6,8 @@ const THING_ACTION_SQL = `
 select     ta.thingId,
            a.actionId,
            a.name, 
-           a.value
+           a.value,
+           a.type
 from       Action a
 inner join ThingAction ta
         on a.actionId = ta.actionId

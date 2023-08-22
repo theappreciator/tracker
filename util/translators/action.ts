@@ -6,7 +6,8 @@ export const translateActionRecordToInterface = (records: ActionRecord[]): IActi
         return {
             actionId: r.actionId,
             name: r.name,
-            value: r.value
+            value: r.value,
+            type: r.type
         }
     });
 
