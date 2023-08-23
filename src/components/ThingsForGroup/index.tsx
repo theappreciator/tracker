@@ -3,7 +3,9 @@ import ThingForAction from "../ThingForAction";
 import { ActionType, IAction, IThing } from "../../../types";
 import ThingAction from "../ThingAction";
 import { useGlobalContext } from "../../context";
-import { startOfToday, isEqual } from 'date-fns'
+import { isEqual } from 'date-fns'
+import { getTodayDateCorrectedForTimezone, isDateStrEqualToToday } from "../../../util";
+import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../../constants";
 
 
 export default function ThingsForGroup(
@@ -50,17 +52,6 @@ export default function ThingsForGroup(
     });
   }
 
-  const isForToday = (thing: IThing | undefined) => {
-    if (!thing?.date) {
-      return false;
-    }
-    const day = thing.date.split('/')[2];
-    const month = thing.date.split('/')[1];
-    const year = thing.date.split('/')[0];
-    const thingDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    return isEqual(thingDate, startOfToday());
-  }
-
   const buttonColor = (thing: IThing, action: IAction) => {
     if (action.type === ActionType.onoff) {
       if (hasCompleted(thing, action)) {
@@ -98,7 +89,7 @@ export default function ThingsForGroup(
                   return (
                   <Grid item key={thingKey} xs={12} sm={6}>
                     <ThingForAction thing={t}>
-                      {isForToday(t) && t.actions.map(a => {
+                      {isDateStrEqualToToday(t.date) && t.actions.map(a => {
                         const actionKey = `action-${t.thingId}-${a.actionId}`;
                         return (
                           <ThingAction

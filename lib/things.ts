@@ -16,7 +16,7 @@ select     u.userId,
            tg.thingGroupId,
            tg.name as groupName,
            t.name as thingName,
-		   DATE_FORMAT(date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')), '%Y/%m/%d') as date,
+		   DATE_FORMAT(date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
 		   th.change as "count"
 from       User u
 inner join ThingGroup tg
@@ -34,7 +34,7 @@ select     u.userId,
            tg.thingGroupId,
            tg.name as groupName,
            t.name as thingName,
-		   DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y/%m/%d') as date,
+		   DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
 		   null
 from       User u
 inner join ThingGroup tg
@@ -58,7 +58,7 @@ select     u.userId,
            tg.thingGroupId,
            tg.name as groupName,
            t.name as thingName,
-           DATE_FORMAT(coalesce(date(th.time), current_date), '%Y/%m/%d') as date,
+           DATE_FORMAT(coalesce(date(th.time), current_date), '%Y-%m-%d') as date,
            coalesce(th.change, 0) as "count"
 from       User u
 inner join ThingGroup tg

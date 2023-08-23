@@ -1,6 +1,10 @@
 import _ from "lodash";
 import { ActionType, IAction, IDateThingGroup, IThing, IThingGroup, ThingActionRecord, ThingGroupRecord, ThingRecord } from "../../types";
-import { format, startOfToday, sub } from "date-fns";
+import { format, sub } from "date-fns";
+import { format as formatTZ, utcToZonedTime } from "date-fns-tz";
+import { getDateCorrectedForTimezone, getTodayDateCorrectedForTimezone } from "..";
+import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../constants";
+
 
 export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]): IThingGroup[] => {
     const thingGroups: IThingGroup[] = _(records)
@@ -50,7 +54,7 @@ export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]
 
 export const translateThingRecordToInterface = (records: ThingRecord[], actionsForThings: ThingActionRecord[], fillInDatesSince?: Date): IDateThingGroup[] => {
   if (!fillInDatesSince) {
-    fillInDatesSince = sub(startOfToday(), { days: 7 });
+    fillInDatesSince = sub(new Date(), { days: 7 });
   };
 
   const allGroupThingIds = _(records)
@@ -192,13 +196,14 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
     .value();
 
     const allDates = new Set<string>(dateThingGroups.map(d => d.date));
-    let workdate: Date = startOfToday();
+    let workdate: Date = new Date();
     while (workdate >= fillInDatesSince) {
-      allDates.add(format(workdate, 'yyyy/MM/dd'));
+      allDates.add(getDateCorrectedForTimezone(workdate, DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE))
       workdate = sub(workdate, { days: 1 });
     }
 
-    const todayGroup = dateThingGroups.find(d => d.date === format(startOfToday(), 'yyyy/MM/dd'));
+    const searchDate = getTodayDateCorrectedForTimezone(DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE);
+    const todayGroup = dateThingGroups.find(d => d.date === searchDate);
     if (!todayGroup) {
       throw new Error(`Error in translateThingRecordToInterface: no found value in todayGroup`);
     }
