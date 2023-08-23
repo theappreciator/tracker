@@ -1,6 +1,7 @@
 import { LoadingButton } from "@mui/lab"
 import { useState } from "react";
 import { ActionType, IAction, IThing } from "../../../types";
+import { hasCompleted } from "../../../util/actions";
 
 export default function ThingAction(
 {
@@ -21,7 +22,6 @@ export default function ThingAction(
   const [isLoading, setLoading] = useState(false);
 
   const handleClick = async () => {
-    console.log("handling a click");
     if (onClick) {
       setLoading(true);
       await onClick(thing.thingId, action.value);
@@ -36,6 +36,7 @@ export default function ThingAction(
       onClick={handleClick}
       variant="contained"
       color={color}
+      disabled={hasCompleted(thing, action)}
     >
       {children}
     </LoadingButton>

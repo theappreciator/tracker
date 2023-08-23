@@ -6,6 +6,8 @@ import { useGlobalContext } from "../../context";
 import { isEqual } from 'date-fns'
 import { getTodayDateCorrectedForTimezone, isDateStrEqualToToday } from "../../../util";
 import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../../constants";
+import action from "../../../pages/api/action";
+import { isActionsCountable, buttonColor } from "../../../util/actions";
 
 
 export default function ThingsForGroup(
@@ -52,31 +54,6 @@ export default function ThingsForGroup(
     });
   }
 
-  const buttonColor = (thing: IThing, action: IAction) => {
-    if (action.type === ActionType.onoff) {
-      if (hasCompleted(thing, action)) {
-        return 'success';
-      }
-      return 'error';
-    }
-
-    return 'primary'
-  }
-
-  const hasCompleted = (thing: IThing, action: IAction) => {
-    switch (action.type) {
-      case ActionType.onoff:
-        if (thing.count && thing.count > 0)
-          return true;
-        else
-          return false;
-        break;
-      case ActionType.count: 
-      default:
-        return undefined
-    }
-  }
-
   return (
     <div>
         <Grid
@@ -88,7 +65,7 @@ export default function ThingsForGroup(
                 if (t.actions.length > 0) {
                   return (
                   <Grid item key={thingKey} xs={12} sm={6}>
-                    <ThingForAction thing={t}>
+                    <ThingForAction thing={t} actionType={isActionsCountable(t.actions) ? ActionType.count : ActionType.onoff}>
                       {isDateStrEqualToToday(t.date) && t.actions.map(a => {
                         const actionKey = `action-${t.thingId}-${a.actionId}`;
                         return (
