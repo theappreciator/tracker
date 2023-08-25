@@ -1,14 +1,14 @@
 import { IronSession } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
-import { ironSessionCookieOptions } from "../../constants";
-import { getLoggingInUser } from "../../lib/users";
-import { CookieUser } from "../../types";
+import { ironSessionCookieOptions } from "../../../constants";
+import { getLoggingInUser } from "../../../lib/users";
+import { CookieUser } from "../../../types";
 import { setTimeout } from 'timers/promises'
-import { insertHistoryForThing } from "../../lib/history";
+import { insertHistoryForThing } from "../../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getTodayThingsForUser, insertNewThingForUser } from "../../lib/things";
-import { getActionsForThings } from "../../lib/actions";
-import { translateThingRecordToInterface } from "../../util/translators/group";
+import { getTodayThingsForUser, insertNewThingForUser } from "../../../lib/things";
+import { getActionsForThings } from "../../../lib/actions";
+import { translateThingRecordToInterface } from "../../../util/translators/group";
 
 export default withIronSessionApiRoute(
   async function thingRoute(req, res) {
@@ -36,9 +36,7 @@ async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
     const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
     const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
     const things = translateThingRecordToInterface(thingRecords, actionsForThings);
-    
-    const payload = things;
-    res.status(200).send(payload);
+    res.status(200).send(things);
   }
 }
 
@@ -52,6 +50,10 @@ async function doPost(req: NextApiRequest, res: NextApiResponse<any>) {
     const thingGroupId = req.body.thingGroupId;
     const thingName = req.body.thingName;
     await insertNewThingForUser(cookiedUser.userId, thingGroupId, thingName);
-    res.status(200).send({});
+      
+    const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
+    const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
+    const things = translateThingRecordToInterface(thingRecords, actionsForThings);
+    res.status(200).send(things);
   }
 }

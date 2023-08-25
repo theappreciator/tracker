@@ -74,6 +74,24 @@ const INSERT_NEW_THING_SQL = `
 insert into Thing values(NULL, ?, 1, ?);
 `
 
+const UPDATE_THING_SQL = `
+UPDATE Thing t
+JOIN   ThingGroup tg on tg.thingGroupID = t.thingGroupId
+SET    t.name = ?
+WHERE  tg.userId = ?
+AND    t.thingId = ?;
+`
+
+const DELETE_THING_SQL = `
+DELETE t, ta, th
+FROM Thing t
+JOIN ThingGroup tg         on tg.thingGroupID = t.thingGroupId
+LEFT JOIN ThingAction ta   on t.thingId = ta.thingId
+LEFT JOIN ThingHistory th  on t.thingID = th.thingId
+WHERE tg.userId = ?
+AND t.thingId = ?
+`
+
 export async function getTodayThingsForUser(userId: number): Promise<ThingRecord[]> {
   return db.promise().query<ThingRecord[]>(THINGS_TODAY_SQL, [ userId ])
   .then(async ([rows,fields]) => {
@@ -103,6 +121,20 @@ export async function insertNewThingForUser(userId: number, thingGroupId: number
     }
 
     throw new Error(`Error inserting into things!  Expected 1 inserted row, recieved ${rows.affectedRows}`);
+  });
+}
+
+export async function updateThingForUser(userId: number, thingId: number, thingName: string) {
+  return db.promise().query<ResultSetHeader>(UPDATE_THING_SQL, [thingName, userId, thingId])
+  .then(async ([rows, fields]) => {
+    return rows.affectedRows;
+  });
+}
+
+export async function deleteThingForUser(userId: number, thingId: number) {
+  return db.promise().query<ResultSetHeader>(DELETE_THING_SQL, [userId, thingId])
+  .then(async ([rows, fields]) => {
+    return rows.affectedRows;
   });
 }
       

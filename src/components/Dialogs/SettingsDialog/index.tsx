@@ -222,7 +222,7 @@ export default function SettingsDialog(
   }
 
 //#endregion
-console.log(selectedGroupAndThingsForEdit?.groupName);
+
   return (
     <>
       {showNewGroupDialog && (
@@ -246,6 +246,7 @@ console.log(selectedGroupAndThingsForEdit?.groupName);
           onCancel={handleEditGroupCancel}
           onSave={handleEditGroupSave}
           onDelete={handleDeleteGroupSave}
+          deleteMessage={`This will also delete all of your things and history for this group.`}
         />
       )}
       {selectedGroupAndThings && (
@@ -262,59 +263,6 @@ console.log(selectedGroupAndThingsForEdit?.groupName);
         onClose={handleCloseClick}
         HeaderRowItems={[HeaderRowItem]}
       />
-      {/* <Dialog
-        fullScreen={fullScreen}
-        open={isVisible}
-        onClose={handleCloseClick}
-        fullWidth={true}
-        maxWidth={"sm"}
-      >
-        <DialogTitle id="responsive-dialog-title">
-        <Box sx={{ display: "flex", alignItems: "center", margin: 0 }}>
-          <Typography
-            variant="h5"
-            component="div"
-            sx={{ flexGrow: 1 }}
-          >
-            {"Settings"}
-          </Typography>
-        </Box>
-
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
-            <Typography
-              variant="h6"
-              sx={{ flexGrow: 1 }}
-            >
-              Your Thing Groups
-            </Typography>
-            <IconButton sx={{ }} aria-label="delete" size="large" onClick={handleAddGroupClick}>
-              <AddIcon fontSize="inherit" />
-            </IconButton>
-          </Box>
-          {groupsAndThings.map(group => {
-            return (
-              <Box key={`group-${group.groupId}`} sx={{ display: "flex", alignItems: "center", margin: 0 }}>
-                <Typography
-                  sx={{ flexGrow: 1 }}
-                >
-                  {group.groupName}
-                </Typography>
-                <Typography>
-                  {group.things.length} Things
-                </Typography>
-                <IconButton aria-label="group detail" size="large" data-groupid={group.groupId} onClick={handleGroupDetailClick}>
-                  <NavigateNextIcon fontSize="inherit"/>
-                </IconButton>
-              </Box>
-            )
-          })}
-        </DialogContent>
-        <DialogActions>
-          <Button variant="text" onClick={handleCloseClick}>Close</Button>
-        </DialogActions>
-      </Dialog> */}
     </>
   )
 }

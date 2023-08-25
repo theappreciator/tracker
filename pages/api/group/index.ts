@@ -6,7 +6,6 @@ import { translateThingGroupRecordToInterface } from "../../../util/translators/
 
 export default withIronSessionApiRoute(
   async function groupRoute(req, res) {
-    console.log("ddd");
     switch (req.method) {
       case 'POST':
         await doPost(req, res);

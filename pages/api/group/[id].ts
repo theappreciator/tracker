@@ -63,12 +63,12 @@ async function doPut(req: NextApiRequest, res: NextApiResponse<any>) {
       const groupId = +req.query.id;
       const groupName = req.body.groupName;
       if (!groupName || typeof groupName !== "string") {
-        res.status(404).send({'a':1});
+        res.status(404).send({});
       }
       else {
         const rows = await updateGroupForUser(cookiedUser.userId, groupId, groupName);
         if (rows === 0) {
-          res.status(404).send({'a':2});
+          res.status(404).send({});
         }
         else {
           const records = await getGroupsWithThingsAndActionsForUser(cookiedUser.userId);

@@ -14,6 +14,7 @@ export default function InputDialog(
   onCancel,
   onSave,
   onDelete,
+  deleteMessage,
 }: {
   isVisible: boolean,
   inputId?: string,
@@ -24,6 +25,7 @@ export default function InputDialog(
   onCancel: () => void,
   onSave: (inputId: string, inputEntry: string) => Promise<boolean>,
   onDelete?: (inputId: string) => Promise<boolean>,
+  deleteMessage?: string,
 }
 ) {
 
@@ -73,12 +75,12 @@ export default function InputDialog(
         aria-describedby="alert-dialog-delete-group-description"
       >
         <DialogTitle id="alert-dialog-delete-group-title">
-          {`Delete Group ${prefill}`}
+          {`Delete ${prefill}`}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-delete-group-description">
-            <p>{`Are you sure you want to delete group ${prefill}?`}</p>
-            <p>{`This will also delete all of your things and history for this group.`}</p>
+            <p>{`Are you sure you want to delete ${prefill}?`}</p>
+            {deleteMessage && <p>{deleteMessage}</p>}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -130,7 +132,7 @@ export default function InputDialog(
             loading={isSaving}
             variant="contained"
             onClick={handleSaveClick}
-            disabled={inputEntry === prefill}
+            disabled={inputEntry === prefill || inputEntry.length === 0}
           >
             Save
           </LoadingButton>

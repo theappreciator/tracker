@@ -28,7 +28,9 @@ export default function ThingGroupsDialog(
 ) {
 
   const [selectedThing, setSelectedThing] = useState<IThing>();
+  const [selectedThingForEdit, setSelectedThingForEdit] = useState<IThing>();
   const [showNewThingDialog, setShowNewThingDialog] = useState(false);
+  const [showEditThingDialog, setShowEditThingDialog] = useState(false);
   const { setNeedsReload } = useGlobalContext();
 
 
@@ -51,8 +53,41 @@ export default function ThingGroupsDialog(
     setNeedsReload(true);
   }
 
+  const updateThingName = async (thingId: number, thingName: string): Promise<void> => {
+    const payload = {
+      thingName
+    };
+
+    const response = await fetch(`/api/thing/${thingId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload)
+    });
+
+    setNeedsReload(true);
+  }
+
+  const deleteThing = async (thingId: number): Promise<void> => {
+    const response = await fetch(`/api/thing/${thingId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    setNeedsReload(true);
+  }
+
   const handleAddThingClick = () => {
     setShowNewThingDialog(true);
+  }
+
+  const handleThingEditClick = (rowItem: RowItem) => {
+    const thing = thingGroup.things.find(t => t.thingId.toString() === rowItem.id);
+    setShowEditThingDialog(true);
+    setSelectedThingForEdit(thing);
   }
 
   const handleAddThingSave = async (groupName: string): Promise<boolean> => {
@@ -69,8 +104,39 @@ export default function ThingGroupsDialog(
     return success;
   }
 
+  const handleEditThingSave = async (thingId: string, thingName: string): Promise<boolean> => {
+    let success = false;
+    await updateThingName(+thingId, thingName)
+    .then(() => {
+      success = true;
+    })
+
+    if (success) {
+      setShowEditThingDialog(false);
+    }
+    
+    return success;
+  }
+
+  const handleDeleteThingSave = async (thingId: string): Promise<boolean> => {
+    let success = false;
+    await deleteThing(+thingId)
+    .then(() => {
+      success = true;
+    })
+
+    if (success) {
+      setShowEditThingDialog(false);
+    }
+    
+    return success;  }
+
   const handleAddThingCancel = () => {
     setShowNewThingDialog(false);
+  }
+
+  const handleEditThingCancel = () => {
+    setShowEditThingDialog(false);
   }
   
   const handleCloseClick = () => {
@@ -100,6 +166,7 @@ export default function ThingGroupsDialog(
       leftText: thing.thingName,
       rightText: `${thing.actions.length} Actions`,
       onDetailClick: handleThingDetailClick,
+      onEditClick: handleThingEditClick,
     }
   });
   
@@ -124,6 +191,20 @@ export default function ThingGroupsDialog(
           onSave={handleAddThingSave}
         />
       )}
+      {showEditThingDialog && selectedThingForEdit && (
+        <InputDialog 
+          isVisible={showEditThingDialog}
+          inputId={selectedThingForEdit?.thingId.toString()}
+          title={"Edit Thing"}
+          subtitle={"Please enter a new thing name.  WARNING"}
+          label={"Thing Name"}
+          prefill={selectedThingForEdit.thingName}
+          onCancel={handleEditThingCancel}
+          onSave={handleEditThingSave}
+          onDelete={handleDeleteThingSave}
+          deleteMessage={`This will also delete all of your history for this thing.`}
+        />
+      )}
       {selectedThing && (
         <ThingActionsDialog
           isVisible={!!selectedThing}
@@ -139,57 +220,6 @@ export default function ThingGroupsDialog(
         onClose={handleCloseClick}
         HeaderRowItems={[HeaderRowItem]}
       />
-      {/* <Dialog
-        open={isVisible}
-        onClose={handleCancelClick}
-        fullWidth={true}
-        maxWidth={"sm"}
-      >
-        <DialogTitle id="responsive-dialog-title">
-        <Box sx={{ display: "flex", alignItems: "center", margin: 0 }}>
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ flexGrow: 1 }}
-          >
-          <Breadcrumbs separator="/" aria-label="breadcrumb">
-            <Typography key="1" color="inherit">
-              ...
-            </Typography>,
-            <Typography key="2" color="inherit">
-              {thingGroup.groupName}
-            </Typography>,
-            <Typography key="3" color="text.primary">
-              Things
-            </Typography>,
-          </Breadcrumbs>
-          </Typography>
-          <IconButton sx={{ }} aria-label="delete" size="large" onClick={handleAddThingClick}>
-            <AddIcon fontSize="inherit" />
-          </IconButton>
-        </Box>
-
-        </DialogTitle>
-        <DialogContent dividers={true}>
-          {thingGroup.things.map(thing => {
-            return (
-              <Box key={`thing-${thing.thingId}`} sx={{ display: "flex", alignItems: "center", margin: 0 }}>
-                <Typography
-                  sx={{ flexGrow: 1 }}
-                >
-                  {thing.thingName}
-                </Typography>
-                <IconButton sx={{ }} aria-label="delete" size="large" data-thingid={thing.thingId} onClick={handleThingDetailClick}>
-                  <NavigateNextIcon fontSize="inherit" />
-                </IconButton>
-              </Box>
-            )
-          })}
-          </DialogContent>
-        <DialogActions>
-          <Button variant="text" onClick={handleCancelClick}>Close</Button>
-        </DialogActions>
-      </Dialog> */}
     </>
   )
 }
