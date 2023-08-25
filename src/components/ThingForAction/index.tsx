@@ -25,9 +25,6 @@ export default function ThingForAction(
       )
     }
     else if (actionType === ActionType.onoff) {
-      console.log(thing);
-      console.log(thing.count);
-      console.log(thing.count && thing.count > 0);
       if (thing.count && thing.count > 0) {
         return (
           <CheckIcon color="success" sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>

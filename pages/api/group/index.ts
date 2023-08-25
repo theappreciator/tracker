@@ -1,11 +1,12 @@
 import { withIronSessionApiRoute } from "iron-session/next";
-import { ironSessionCookieOptions } from "../../constants";
+import { ironSessionCookieOptions } from "../../../constants";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getGroupsWithThingsAndActionsForUser, insertGroupForUser } from "../../lib/groups";
-import { translateThingGroupRecordToInterface } from "../../util/translators/group";
+import { getGroupsWithThingsAndActionsForUser, insertGroupForUser } from "../../../lib/groups";
+import { translateThingGroupRecordToInterface } from "../../../util/translators/group";
 
 export default withIronSessionApiRoute(
   async function groupRoute(req, res) {
+    console.log("ddd");
     switch (req.method) {
       case 'POST':
         await doPost(req, res);

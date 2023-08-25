@@ -61,7 +61,7 @@ export default function ThingsForGroup(
             spacing={2}
         >
             {!showSkeleton && things.length > 0 && things.map(t => {
-                const thingKey = `thing-${t.thingId}`;
+                const thingKey = `date-${t.date}-group-${groupName}-thing-${t.thingId}`;
                 if (t.actions.length > 0) {
                   return (
                   <Grid item key={thingKey} xs={12} sm={6}>

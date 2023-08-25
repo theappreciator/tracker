@@ -6,7 +6,7 @@ import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { IAction, IThing, IThingGroup } from "../../../../types";
 import ThingActionsDialog from "../ThingActionsDialog";
 import InputDialog from "../InputDialog";
-import ListDialog, { GroupRowItem, HeaderItem, RowItem } from "../ListDialog";
+import ListDialog, { HeaderRowItem, HeaderItem, RowItem } from "../ListDialog";
 import { useGlobalContext } from "../../../context";
 
 
@@ -103,7 +103,7 @@ export default function ThingGroupsDialog(
     }
   });
   
-  const groupRowItem: GroupRowItem = {
+  const HeaderRowItem: HeaderRowItem = {
     rows: rowItems,
   }
 
@@ -137,7 +137,7 @@ export default function ThingGroupsDialog(
         isVisible={isVisible}
         headerItem={headerItem}
         onClose={handleCloseClick}
-        groupRowItems={[groupRowItem]}
+        HeaderRowItems={[HeaderRowItem]}
       />
       {/* <Dialog
         open={isVisible}
