@@ -1,4 +1,6 @@
 import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../constants";
+import { sub } from "date-fns";
+import { IDateThingGroup } from "../types";
 
 export const getTodayDateCorrectedForTimezone = (locale: string, timezone: string): string => {
   return getDateCorrectedForTimezone(new Date(), locale, timezone);
@@ -35,4 +37,29 @@ export const isDateStrEqualToToday = (dateStr: string | undefined): boolean => {
   }
   const today = getTodayDateCorrectedForTimezone(DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE);
   return today === dateStr;
+}
+
+export const getDateStringsInPastXDays = (numberOfDays: number): string[] => {
+  const fillInDatesSince = sub(new Date(), { days: numberOfDays });
+
+  const allDatesToFill = new Set<string>();
+  let workdate: Date = new Date();
+  while (workdate >= fillInDatesSince) {
+    allDatesToFill.add(getDateCorrectedForTimezone(workdate, DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE))
+    workdate = sub(workdate, { days: 1 });
+  }
+
+  return Array.from(allDatesToFill);
+}
+
+export const dateThingGroupAscendingSorter = (a: IDateThingGroup, b: IDateThingGroup) => {
+  const aDate = new Date(a.date);
+  const bDate = new Date(b.date);
+  return aDate.getTime() - bDate.getTime();
+}
+
+export const dateThingGroupDescendingSorter = (a: IDateThingGroup, b: IDateThingGroup) => {
+  const aDate = new Date(a.date);
+  const bDate = new Date(b.date);
+  return bDate.getTime() - aDate.getTime();
 }

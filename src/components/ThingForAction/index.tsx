@@ -1,4 +1,4 @@
-import { Card, CardHeader, Typography, CardActions } from "@mui/material";
+import { Card, CardHeader, Typography, CardActions, Box } from "@mui/material";
 import { ActionType, IThing } from "../../../types";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -16,12 +16,23 @@ export default function ThingForAction(
 }
 ) {  
 
+  const goalTracking = false;
+
   const getCountDisplay = () => {
     if (actionType === ActionType.count) {
       return (
-      <Typography sx={{ fontSize: "4rem" }} color="#333">
-        {thing.count}
-      </Typography>
+        <>
+          <Typography sx={{ fontSize: "4rem", textAlign: "right" }} color="#333">
+            {thing.count}
+          </Typography>
+          {goalTracking && (
+            <Box sx={{ backgroundColor: "#fcc", paddingRight: "0rem", textAlign: "right" }}>
+              <Typography sx={{ fontSize: "1rem", lineHeight: "0rem", textAlign: "right" }} color="#333">
+                /100
+              </Typography>
+            </Box>
+          )}
+        </>
       )
     }
     else if (actionType === ActionType.onoff) {

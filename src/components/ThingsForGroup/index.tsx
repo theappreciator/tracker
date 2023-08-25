@@ -4,7 +4,7 @@ import { ActionType, IAction, IThing } from "../../../types";
 import ThingAction from "../ThingAction";
 import { useGlobalContext } from "../../context";
 import { isEqual } from 'date-fns'
-import { getTodayDateCorrectedForTimezone, isDateStrEqualToToday } from "../../../util";
+import { getTodayDateCorrectedForTimezone, isDateStrEqualToToday } from "../../../util/date";
 import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../../constants";
 import action from "../../../pages/api/action";
 import { isActionsCountable, buttonColor } from "../../../util/actions";
