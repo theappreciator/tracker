@@ -1,8 +1,10 @@
-import { Skeleton } from "@mui/material";
+import { IconButton, Skeleton } from "@mui/material";
 import ThingsForGroup from "../ThingsForGroup";
 import { useGlobalContext } from "../../context";
 import { IDateThingGroup, IThing } from "../../../types";
 import { Fragment } from "react";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 
 export default function ThingGroupContainer(
@@ -43,7 +45,11 @@ export default function ThingGroupContainer(
         return (
           <Fragment key={`date-${d.date}`}>
             {showSkeleton && <Skeleton animation="pulse"><h2>{d.date}</h2></Skeleton>}
-            {!showSkeleton && <h2>{d.date}</h2>}
+            {!showSkeleton && (
+              <h2>
+                {d.date}
+              </h2>
+            )}
             <hr/>
             {showSkeleton && (
               <ThingsForGroup

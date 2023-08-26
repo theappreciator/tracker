@@ -11,6 +11,8 @@
     "@mui/icons-material": "^5.14.3",
     "@mui/lab": "^5.0.0-alpha.139",
     "@mui/material": "^5.14.4",
+    "@visx/react-spring": "^3.3.0",
+    "@visx/visx": "^3.3.0",
     "argon2": "^0.31.0",
     "date-fns": "^2.30.0",
     "date-fns-tz": "^2.0.0",
@@ -23,6 +25,7 @@
     "next": "^13.4.19",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-spring": "^9.7.2",
     "remark": "^14.0.2",
     "remark-html": "^15.0.1"
   },

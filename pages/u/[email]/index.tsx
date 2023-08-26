@@ -1,11 +1,11 @@
-import Layout from '../../components/layout'
+import Layout from '../../../components/layout'
 import { withIronSessionSsr } from "iron-session/next";
-import { ironSessionCookieOptions } from '../../constants'
+import { ironSessionCookieOptions } from '../../../constants'
 import { useEffect, useState } from 'react'
-import { GlobalContext } from '../../src/context'
+import { GlobalContext } from '../../../src/context'
 import { useRouter } from 'next/router'
-import ThingGroupContainer from '../../src/components/ThingGroupContainer'
-import { IDateThingGroup } from '../../types';
+import ThingGroupContainer from '../../../src/components/ThingGroupContainer'
+import { IDateThingGroup } from '../../../types';
 
 const getThingsAndActions = async (): Promise<IDateThingGroup[]> => {
   const response = await fetch('/api/thing');
