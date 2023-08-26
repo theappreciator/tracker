@@ -20,9 +20,9 @@ export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]
             const actions: IAction[] = thingValueArray.filter(t => t.actionId).map(t => {
               return {
                 actionId: t.actionId,
-                name: "XX",
-                value: 0,
-                type: ActionType.unspecified,
+                name: t.actionName,
+                value: t.actionValue,
+                type: t.actionType
               }
             })
             const foundValue = thingValueArray.find(v=> v.thingId.toString() === thingKey);
@@ -33,6 +33,8 @@ export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]
               thingId: parseInt(thingKey),
               thingName: foundValue.thingName,
               groupName: foundValue.groupName,
+              goal: +foundValue.goal || 0, // coerce to a number, mysql2 is returning a string
+              count: 0,
               actions: actions
             };
           })
@@ -108,6 +110,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
               groupName: foundThingValue.groupName,
               date: dateKey,
               count: +foundThingValue.count || 0, //for some reason the Record here is coming back as a string, so force it to a number
+              goal: +foundThingValue.goal || 0, //same, string for some reason, coerce to a number
               actions: actions
             };
           })
@@ -138,6 +141,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
               groupName: foundThingValue.groupName,
               date: dateKey,
               count: 0,
+              goal: +foundThingValue.goal || 0,
               actions: actions,
             };
         });
@@ -183,6 +187,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
             groupName: foundThingValue.groupName,
             date: dateKey,
             count: 0,
+            goal: +foundThingValue.goal || 0,
             actions: actions,
           };
         });

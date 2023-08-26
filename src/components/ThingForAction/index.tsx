@@ -4,6 +4,75 @@ import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 
+const colorForGoal = (thing: IThing) => {
+  if (thing.goal === 0) {
+    return "#333";
+  }
+
+  const percent = thing.count / thing.goal;
+  console.log(thing.count, thing.goal, percent);
+
+  if (percent >= 1) {
+    return "#2e7d32";
+  }
+  else if (percent >= 0.8) {
+    return "#94b058";
+  }
+  else if (percent >= 0.2) {
+    return "#ED9F02";
+  }
+  else if (percent > 0) {
+    return "#ed6c02";
+  }
+  else {
+    return "#d32f2f";
+  }
+}
+
+const CountWithGoals = (
+  {
+    children,
+    thing,
+  }: {
+    children?: React.ReactNode,
+    thing: IThing,
+  }
+) => {
+  return (
+    <>
+      <Typography sx={{ fontSize: "4rem", textAlign: "right" }} color={colorForGoal(thing)}>
+        {thing.count}
+      </Typography>
+      {thing.goal > 0 && (
+        <Box sx={{ backgroundColor: "#fcc", paddingRight: "0rem", textAlign: "right" }}>
+          <Typography sx={{ fontSize: "1rem", lineHeight: "0rem", textAlign: "right" }} color="#333">
+            {`/${thing.goal}`}
+          </Typography>
+        </Box>
+      )}
+    </>
+  )
+}
+
+const OnOffDisplay = (
+  {
+    children,
+    thing,
+  }: {
+    children?: React.ReactNode,
+    thing: IThing,
+  }
+) => {
+  if (thing.count && thing.count > 0) {
+    return (
+      <CheckIcon color="success" sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
+    )
+  }
+  return (
+    <DoNotDisturbAltIcon sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
+  )
+}
+
 export default function ThingForAction(
 {
   children,
@@ -16,34 +85,12 @@ export default function ThingForAction(
 }
 ) {  
 
-  const goalTracking = false;
-
   const getCountDisplay = () => {
     if (actionType === ActionType.count) {
-      return (
-        <>
-          <Typography sx={{ fontSize: "4rem", textAlign: "right" }} color="#333">
-            {thing.count}
-          </Typography>
-          {goalTracking && (
-            <Box sx={{ backgroundColor: "#fcc", paddingRight: "0rem", textAlign: "right" }}>
-              <Typography sx={{ fontSize: "1rem", lineHeight: "0rem", textAlign: "right" }} color="#333">
-                /100
-              </Typography>
-            </Box>
-          )}
-        </>
-      )
+      return <CountWithGoals thing={thing} />
     }
     else if (actionType === ActionType.onoff) {
-      if (thing.count && thing.count > 0) {
-        return (
-          <CheckIcon color="success" sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
-        )
-      }
-      return (
-        <DoNotDisturbAltIcon sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
-      )
+      return <OnOffDisplay thing={thing} />
     }
     else {
       return <div>junk</div>

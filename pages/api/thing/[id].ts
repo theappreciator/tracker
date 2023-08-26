@@ -6,7 +6,7 @@ import { CookieUser } from "../../../types";
 import { setTimeout } from 'timers/promises'
 import { insertHistoryForThing } from "../../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
-import { deleteThingForUser, getTodayThingsForUser, insertNewThingForUser, updateThingForUser } from "../../../lib/things";
+import { deleteThingForUser, getTodayThingsForUser, updateThingForUser } from "../../../lib/things";
 import { getActionsForThings } from "../../../lib/actions";
 import { translateThingRecordToInterface } from "../../../util/translators/group";
 
@@ -41,11 +41,13 @@ async function doPut(req: NextApiRequest, res: NextApiResponse<any>) {
     else {
       const thingId = +req.query.id;
       const thingName = req.body.thingName;
-      if (!thingName || typeof thingName !== "string") {
-        res.status(404).send({});
+      const thingGoal = req.body.goal;
+      if ((!thingName || typeof thingName !== "string") ||
+          ((typeof thingGoal === 'undefined') )) {
+        res.status(400).send({});
       }
       else {
-        const rows = await updateThingForUser(cookiedUser.userId, thingId, thingName);
+        const rows = await updateThingForUser(cookiedUser.userId, thingId, thingName, +thingGoal);
         if (rows === 0) {
           res.status(404).send({});
         }

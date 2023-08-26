@@ -5,7 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { IAction, IThing, IThingGroup } from "../../../../types";
 import ThingActionsDialog from "../ThingActionsDialog";
-import InputDialog from "../InputDialog";
+import GoalInputDialog from "../GoalInputDialog";
 import ListDialog, { HeaderRowItem, HeaderItem, RowItem } from "../ListDialog";
 import { useGlobalContext } from "../../../context";
 
@@ -36,10 +36,11 @@ export default function ThingGroupsDialog(
 
   const [isSaving, setSaving] = useState(false);
 
-  const saveThingName = async (thingName: string): Promise<void> => {
+  const saveThingName = async (thingName: string, goal: number): Promise<void> => {
     const payload = {
       thingGroupId: thingGroup.groupId,
-      thingName
+      thingName,
+      goal
     };
 
     const response = await fetch("/api/thing", {
@@ -53,9 +54,10 @@ export default function ThingGroupsDialog(
     setNeedsReload(true);
   }
 
-  const updateThingName = async (thingId: number, thingName: string): Promise<void> => {
+  const updateThingName = async (thingId: number, thingName: string, goal: number): Promise<void> => {
     const payload = {
-      thingName
+      thingName,
+      goal
     };
 
     const response = await fetch(`/api/thing/${thingId}`, {
@@ -90,9 +92,9 @@ export default function ThingGroupsDialog(
     setSelectedThingForEdit(thing);
   }
 
-  const handleAddThingSave = async (groupName: string): Promise<boolean> => {
+  const handleAddThingSave = async (thingId: string, thingName: string, goal?: number): Promise<boolean> => {
     let success = false;
-    await saveThingName(groupName)
+    await saveThingName(thingName, goal || 0)
     .then(() => {
       success = true;
     })
@@ -104,9 +106,9 @@ export default function ThingGroupsDialog(
     return success;
   }
 
-  const handleEditThingSave = async (thingId: string, thingName: string): Promise<boolean> => {
+  const handleEditThingSave = async (thingId: string, thingName: string, goal?: number): Promise<boolean> => {
     let success = false;
-    await updateThingName(+thingId, thingName)
+    await updateThingName(+thingId, thingName, goal || 0)
     .then(() => {
       success = true;
     })
@@ -179,26 +181,30 @@ export default function ThingGroupsDialog(
     onDetailClick: handleAddThingClick
   }
 
+  console.log(selectedThingForEdit);
+
   return (
     <>
       {showNewThingDialog && (
-        <InputDialog 
+        <GoalInputDialog 
           isVisible={showNewThingDialog}
           title={"New Thing"}
           subtitle={"Please enter a new Thing name to track."}
           label={"Thing Name"}
+          prefillGoal={0}
           onCancel={handleAddThingCancel}
           onSave={handleAddThingSave}
         />
       )}
       {showEditThingDialog && selectedThingForEdit && (
-        <InputDialog 
+        <GoalInputDialog 
           isVisible={showEditThingDialog}
           inputId={selectedThingForEdit?.thingId.toString()}
           title={"Edit Thing"}
           subtitle={"Please enter a new thing name.  WARNING"}
           label={"Thing Name"}
-          prefill={selectedThingForEdit.thingName}
+          prefillName={selectedThingForEdit.thingName}
+          prefillGoal={selectedThingForEdit.goal}
           onCancel={handleEditThingCancel}
           onSave={handleEditThingSave}
           onDelete={handleDeleteThingSave}

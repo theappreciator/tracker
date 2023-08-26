@@ -49,7 +49,8 @@ async function doPost(req: NextApiRequest, res: NextApiResponse<any>) {
   else {
     const thingGroupId = req.body.thingGroupId;
     const thingName = req.body.thingName;
-    await insertNewThingForUser(cookiedUser.userId, thingGroupId, thingName);
+    const thingGoal = req.body.goal;
+    await insertNewThingForUser(cookiedUser.userId, thingGroupId, thingName, thingGoal);
       
     const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
     const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));

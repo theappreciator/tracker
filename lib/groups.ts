@@ -11,7 +11,11 @@ select 	   tg.userId,
            tg.name as groupName,
 		       t.thingId,
            t.name as thingName,
-           a.actionId
+           t.goal,
+           a.actionId,
+           a.name as actionName,
+           a.value as actionValue,
+           a.type as actionType
 from 	     ThingGroup tg
 left join  Thing t
 		  on   tg.thingGroupId = t.thingGroupId

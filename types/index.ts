@@ -60,7 +60,8 @@ export interface IThing {
   thingName: string;
   groupName: string;
   date?: string;
-  count?: number;
+  count: number;
+  goal: number;
   actions: IAction[]
 }
 

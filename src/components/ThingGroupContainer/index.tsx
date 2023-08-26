@@ -27,6 +27,7 @@ export default function ThingGroupContainer(
       groupName: 'skeleton',
       date: '2023/08/18',
       count: 0,
+      goal: 0,
       actions: []
     },
     {
@@ -35,6 +36,7 @@ export default function ThingGroupContainer(
       groupName: 'skeleton',
       date: '2023/08/18',
       count: 0,
+      goal: 0,
       actions: []
     }
   ];

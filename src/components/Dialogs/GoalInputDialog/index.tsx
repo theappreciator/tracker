@@ -1,16 +1,18 @@
 import { LoadingButton } from "@mui/lab";
-import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button } from "@mui/material";
+import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Select, FormControl, InputLabel, MenuItem, Box } from "@mui/material";
 import { KeyboardEventHandler, useState } from "react";
 
+const SELECT_NULL_ENTRY = "None";
 
-export default function InputDialog(
+export default function GoalInputDialog(
 {
   isVisible,
   inputId = "stand-in-id",
   title,
   subtitle,
   label,
-  prefill = '',
+  prefillName = '',
+  prefillGoal,
   onCancel,
   onSave,
   onDelete,
@@ -21,15 +23,17 @@ export default function InputDialog(
   title: string,
   subtitle: string,
   label: string,
-  prefill?: string,
+  prefillName?: string,
+  prefillGoal?: number,
   onCancel: () => void,
-  onSave: (inputId: string, inputEntry: string) => Promise<boolean>,
+  onSave: (inputId: string, inputEntry: string, selectEntry?: number) => Promise<boolean>,
   onDelete?: (inputId: string) => Promise<boolean>,
   deleteMessage?: string,
 }
 ) {
 
-  const [inputEntry, setInputEntry] = useState(prefill);
+  const [inputEntry, setInputEntry] = useState(prefillName);
+  const [selectEntry, setSelectEntry] = useState(prefillGoal);
   const [isSaving, setSaving] = useState(false);
   const [isDeleting, setDeleting] = useState(false);
   const [showDeleteConfirmationDialog, setShowDeleteConfirmationDialog] = useState(false);
@@ -39,9 +43,14 @@ export default function InputDialog(
     setInputEntry(newInputEntry || '');
   }
 
+  const handleSelectChange = (event: any) => {
+    const newSelectEntry = event.target.value;
+    setSelectEntry(newSelectEntry || SELECT_NULL_ENTRY);
+  }
+
   const handleSaveClick = async () => {
     setSaving(true);
-    const success = await onSave(inputId, inputEntry);
+    const success = await onSave(inputId, inputEntry, selectEntry);
     setInputEntry('');
     setSaving(false);
   }
@@ -65,6 +74,8 @@ export default function InputDialog(
    }
   }
 
+  console.log(prefillName, prefillGoal);
+
   return (
     <>
     {showDeleteConfirmationDialog && (
@@ -75,11 +86,11 @@ export default function InputDialog(
         aria-describedby="alert-dialog-delete-group-description"
       >
         <DialogTitle id="alert-dialog-delete-group-title">
-          {`Delete ${prefill}`}
+          {`Delete ${prefillName}`}
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-delete-group-description">
-            <p>{`Are you sure you want to delete ${prefill}?`}</p>
+            <p>{`Are you sure you want to delete ${prefillName}?`}</p>
             {deleteMessage && <p>{deleteMessage}</p>}
           </DialogContentText>
         </DialogContent>
@@ -103,17 +114,35 @@ export default function InputDialog(
           <DialogContentText>
             {subtitle}
           </DialogContentText>
-          <TextField
-            autoFocus
-            margin="normal"
-            id={inputId}
-            label={label}      
-            type="text"
-            autoComplete={undefined}
-            fullWidth
-            value={inputEntry}
-            onChange={handleInputChange}
-          />
+          <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", marginTop: "1rem", gap: "1rem" }}>
+            <FormControl sx={{ flexGrow: 1 }}>
+              <TextField
+                autoFocus
+                id={inputId}
+                label={label}      
+                type="text"
+                autoComplete={undefined}
+                value={inputEntry}
+                onChange={handleInputChange}
+              />
+            </FormControl>
+            {prefillGoal !== undefined && (
+              <FormControl sx={{ width: 120 }}>
+                <InputLabel id="demo-simple-select-label">Goal</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  label="Goal"
+                  value={selectEntry}
+                  onChange={handleSelectChange}
+                >
+                  <MenuItem aria-label={SELECT_NULL_ENTRY} value={0}>No Goal</MenuItem>
+                  {[...Array(100)].map((_, i) => (
+                    <MenuItem value={i+1}>{i + 1}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            )}
+          </Box>
         </DialogContent>
         <DialogActions>
           {typeof onDelete === 'function' && (
@@ -132,7 +161,10 @@ export default function InputDialog(
             loading={isSaving}
             variant="contained"
             onClick={handleSaveClick}
-            disabled={inputEntry === prefill || inputEntry.length === 0}
+            disabled={
+              (inputEntry === prefillName || inputEntry.length === 0) &&
+              (typeof prefillGoal !== "undefined" && selectEntry === prefillGoal)
+            }
           >
             Save
           </LoadingButton>

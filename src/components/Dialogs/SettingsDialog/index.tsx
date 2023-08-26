@@ -2,7 +2,7 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, B
 import { useContext, useEffect, useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import NavigateNextIcon from '@mui/icons-material/NavigateNext';
-import InputDialog from "../InputDialog";
+import InputDialog from "../GoalInputDialog";
 import ThingGroupsDialog from "../ThingGroupsDialog";
 import { IAction, IThingGroup } from "../../../../types";
 import { useGlobalContext } from "../../../context";
@@ -242,7 +242,7 @@ export default function SettingsDialog(
           title={"Edit Group"}
           subtitle={"Please enter a new group name.  WARNING"}
           label={"Group Name"}
-          prefill={selectedGroupAndThingsForEdit.groupName}
+          prefillName={selectedGroupAndThingsForEdit.groupName}
           onCancel={handleEditGroupCancel}
           onSave={handleEditGroupSave}
           onDelete={handleDeleteGroupSave}
