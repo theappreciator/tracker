@@ -1,6 +1,6 @@
 {
-    "name": "PWA App",
-    "short_name": "App",
+    "name": "Thing Tracker",
+    "short_name": "Thing Tracker",
     "icons": [
       {
         "src": "/icons/android-chrome-192x192.png",
