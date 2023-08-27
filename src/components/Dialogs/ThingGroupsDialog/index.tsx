@@ -181,8 +181,6 @@ export default function ThingGroupsDialog(
     onDetailClick: handleAddThingClick
   }
 
-  console.log(selectedThingForEdit);
-
   return (
     <>
       {showNewThingDialog && (

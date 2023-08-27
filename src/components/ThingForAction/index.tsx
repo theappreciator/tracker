@@ -10,7 +10,6 @@ const colorForGoal = (thing: IThing) => {
   }
 
   const percent = thing.count / thing.goal;
-  console.log(thing.count, thing.goal, percent);
 
   if (percent >= 1) {
     return "#2e7d32";

@@ -74,8 +74,6 @@ export default function GoalInputDialog(
    }
   }
 
-  console.log(prefillName, prefillGoal);
-
   return (
     <>
     {showDeleteConfirmationDialog && (
