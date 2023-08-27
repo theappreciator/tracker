@@ -9,23 +9,23 @@ const colorForGoal = (thing: IThing) => {
     return "#333";
   }
 
-  const percent = thing.count / thing.goal;
+  const percent = Math.min(Math.floor(thing.count / thing.goal * 10), 10);
 
-  if (percent >= 1) {
-    return "#2e7d32";
-  }
-  else if (percent >= 0.8) {
-    return "#94b058";
-  }
-  else if (percent >= 0.2) {
-    return "#ED9F02";
-  }
-  else if (percent > 0) {
-    return "#ed6c02";
-  }
-  else {
-    return "#d32f2f";
-  }
+  const colors = [
+    "#ac1f1f",
+    "#bf3c17",
+    "#d54d3e",
+    "#f46d43",
+    "#fdae61",
+    "#fee08b",
+    "#e3e35f",
+    "#b0d555",
+    "#84bb62",
+    "#63b859",
+    "#2e7d32"
+  ];
+
+  return colors[percent];
 }
 
 const CountWithGoals = (
