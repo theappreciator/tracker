@@ -8,8 +8,11 @@ import { LoadingButton } from '@mui/lab'
 import SettingsIcon from '@mui/icons-material/Settings';
 
 import { title } from 'process'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import SettingsDialog from '../src/components/Dialogs/SettingsDialog'
+import Script from 'next/script'
+import PullToRefresh from 'pulltorefreshjs';
+
 
 export const siteTitle = "Thing Tracker";
 export const siteDescription = "Track your things";
@@ -25,6 +28,15 @@ export default function Layout({
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+
+  useEffect(() => {
+    PullToRefresh.init({
+      mainElement: 'body',
+      distMax: 100,
+      distReload: 70,
+      onRefresh: function(){ window.location.reload(); }
+    });
+  }, []);
 
   const handleLogout = async (event: any) => {
     event.preventDefault();
