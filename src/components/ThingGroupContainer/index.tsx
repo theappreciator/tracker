@@ -1,10 +1,13 @@
 import { IconButton, Skeleton } from "@mui/material";
 import ThingsForGroup from "../ThingsForGroup";
 import { useGlobalContext } from "../../context";
-import { IDateThingGroup, IThing } from "../../../types";
+import { IDateThingGroup, IThing, IThingGroup } from "../../../types";
 import { Fragment } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { getDateStringsInPastXDays, getTodayDateCorrectedForTimezone } from "../../../util/date";
+import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../../constants";
+import { generateSkeletonDateGroupThings } from "../../../util/generators/dateGroupThing";
 
 
 export default function ThingGroupContainer(
@@ -20,26 +23,9 @@ export default function ThingGroupContainer(
   const { didFirstLoad } = useGlobalContext();
   const showSkeleton = !didFirstLoad;
 
-  const skeletonThings: IThing[] = [
-    {
-      thingId: 1,
-      thingName: 'skeleton',
-      groupName: 'skeleton',
-      date: '2023/08/18',
-      count: 0,
-      goal: 0,
-      actions: []
-    },
-    {
-      thingId: 1,
-      thingName: 'skeleton',
-      groupName: 'skeleton',
-      date: '2023/08/18',
-      count: 0,
-      goal: 0,
-      actions: []
-    }
-  ];
+  if (showSkeleton) {
+    dateThingGroups = generateSkeletonDateGroupThings()
+  }
 
   return (
     <>
@@ -53,14 +39,7 @@ export default function ThingGroupContainer(
               </h2>
             )}
             <hr/>
-            {showSkeleton && (
-              <ThingsForGroup
-                key={`skeleton-group`}
-                groupName={'skeleton'}
-                things={skeletonThings}
-              />
-            )}
-            {!showSkeleton && d.groups.map((g, i) => {
+            {d.groups.map((g, i) => {
               const groupKey = `group-${g.groupName}`;
               return (
                 <Fragment key={groupKey}>

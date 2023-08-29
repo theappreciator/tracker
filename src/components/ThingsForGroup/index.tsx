@@ -60,38 +60,35 @@ export default function ThingsForGroup(
             container
             spacing={2}
         >
-            {!showSkeleton && things.length > 0 && things.map(t => {
+            {things.length > 0 && things.map(t => {
                 const thingKey = `date-${t.date}-group-${groupName}-thing-${t.thingId}`;
                 if (t.actions.length > 0) {
                   return (
                   <Grid item key={thingKey} xs={12} sm={6}>
-                    <ThingForAction thing={t} actionType={isActionsCountable(t.actions) ? ActionType.count : ActionType.onoff}>
-                      {isDateStrEqualToToday(t.date) && t.actions.map(a => {
-                        const actionKey = `action-${t.thingId}-${a.actionId}`;
-                        return (
-                          <ThingAction
-                            key={actionKey}
-                            thing={t}
-                            action={a}
-                            color={buttonColor(t, a)}
-                            onClick={handleActionClick}
-                          >
-                            {a.name}
-                          </ThingAction>
-                        )
-                      })}
-                    </ThingForAction>
+                    {showSkeleton && (
+                      <Skeleton animation="wave" height={100}/>
+                    )}
+                    {!showSkeleton && (
+                      <ThingForAction thing={t} actionType={isActionsCountable(t.actions) ? ActionType.count : ActionType.onoff}>
+                        {isDateStrEqualToToday(t.date) && t.actions.map(a => {
+                          const actionKey = `action-${t.thingId}-${a.actionId}`;
+                          return (
+                            <ThingAction
+                              key={actionKey}
+                              thing={t}
+                              action={a}
+                              color={buttonColor(t, a)}
+                              onClick={handleActionClick}
+                            >
+                              {a.name}
+                            </ThingAction>
+                          )
+                        })}
+                      </ThingForAction>
+                    )}
                   </Grid>
                   );
                 }
-            })}
-            {showSkeleton && things.map(t => {
-              const thingKey = `thing-${t.thingId}`;
-              return (
-                <Grid item key={thingKey} xs={12} sm={6}>
-                  <Skeleton animation="wave" height={100}/>
-                </Grid>
-              );
             })}
         </Grid>
     </div>
