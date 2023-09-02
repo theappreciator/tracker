@@ -6,6 +6,7 @@ import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import FeelingIcon from "../Icons/FeelingIcon";
 import { getClosestNumber } from "../../../util/math";
 import { COLOR_RANGE } from "../../../constants";
+import { getTierCountsFromSegmentType } from "../../../util/thing";
 
 const colorForGoal = (thing: IThing) => {
   if (thing.goal === 0) {
@@ -61,23 +62,12 @@ const SummaryOnOffDisplay = (
   )
 }
 
-const getTiersFromSegment = (thing: IThing) => {
-  if (thing.count === 0) {
-    return [0, 0, 0];
-  }
-  const revStr = thing.count.toString().split('').reverse().join('');
-  const tier1 = +(revStr.substring(0,3).split('').reverse().join('')); // 1-999
-  const tier2 = +(revStr.substring(3,6).split('').reverse().join('')); // 1000-999999
-  const tier3 = +(revStr.substring(6,9).split('').reverse().join('')); // 1000000-999999999
-  return [tier1, tier2, tier3];
-}
-
 const getAverageSegmentClamp = (thing: IThing) => {
   if (thing.count === 0) {
     return 0;
   }
 
-  const [tier1, tier2, tier3] = getTiersFromSegment(thing);
+  const [tier1, tier2, tier3] = getTierCountsFromSegmentType(thing);
 
   const score = tier1 * 0 + tier2 * 1 + tier3 * 2;
   const maxScore = (tier1 + tier2 + tier3) * 2;
@@ -121,7 +111,7 @@ const SummarySegmentSize = (
     thing: IThing,
   }
 ) => {
-  const tiers = getTiersFromSegment(thing);
+  const tiers = getTierCountsFromSegmentType(thing);
   return (
     <Typography sx={{ fontSize: "2.5rem", lineHeight: "6rem", textAlign: "right" }} color={colorForGoal(thing)}>
       {tiers.join('/')}

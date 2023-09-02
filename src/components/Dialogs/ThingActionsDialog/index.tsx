@@ -41,7 +41,8 @@ export default function ThingActionsDialog(
     // const success = await onSave(groupName);
     // setGroupname('');
 
-    const actionsToSave = Object.entries(actionStates).filter(([k, v]) => v).map(([key, val]) => parseInt(key));
+    const onActions = Object.entries(actionStates).filter(([k, v]) => v).map(([key, val]) => parseInt(key));
+    const actionsToSave = actions.filter(a => onActions.includes(a.actionId) && a.type === selectedActionType).map(a => a.actionId);
 
     const payload = {
       thingId: thing?.thingId,

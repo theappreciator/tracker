@@ -34,6 +34,7 @@ export type ThingActionRecord = RowDataPacket & {
 }
 
 export enum ActionSegmentFeeling {
+  Unspecified = 0,
   Bad = 1,
   Neutral = 1000,
   Good = 1000000,
