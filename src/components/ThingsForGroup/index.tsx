@@ -78,9 +78,7 @@ export default function ThingsForGroup(
                               action={a}
                               color={buttonColor(t, a)}
                               onClick={handleActionClick}
-                            >
-                              {a.name}
-                            </ThingAction>
+                            />
                           )
                         })}
                       </ThingForAction>

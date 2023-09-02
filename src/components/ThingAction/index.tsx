@@ -3,6 +3,7 @@ import { useState } from "react";
 import { ActionSegmentFeeling, ActionType, IAction, IThing } from "../../../types";
 import { hasCompleted } from "../../../util/actions";
 import FeelingIcon from "../Icons/FeelingIcon";
+import YesNoIcon from "../Icons/YesNoIcon";
 
 export default function ThingAction(
 {
@@ -22,13 +23,14 @@ export default function ThingAction(
 
   const [isLoading, setLoading] = useState(false);
 
-  const getDisplay = () => {
+  const getDisplay = (isDisabled: boolean) => {
     switch (action.type) {
       case ActionType.segmentFeeling:
-        return <FeelingIcon actionValue={action.value} placement="button"/>
+        return <FeelingIcon actionValue={action.value} placement="button" disabled={isDisabled} />
+      case ActionType.onoff:
+        return <YesNoIcon actionValue={action.value} placement="button"  disabled={isDisabled}/>
       case ActionType.segmentSize:
       case ActionType.count:
-      case ActionType.onoff:
       case ActionType.unspecified:
       default:
         return action.name;
@@ -43,6 +45,8 @@ export default function ThingAction(
     }
   }
 
+  const isDisabled = hasCompleted(thing, action);
+
   return (
     <LoadingButton
       loading={isLoading}
@@ -50,9 +54,9 @@ export default function ThingAction(
       onClick={handleClick}
       variant="contained"
       color={color}
-      disabled={hasCompleted(thing, action)}
+      disabled={isDisabled}
     >
-      {getDisplay()}
+      {getDisplay(isDisabled || false)}
     </LoadingButton>
   )
 }

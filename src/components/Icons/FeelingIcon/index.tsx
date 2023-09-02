@@ -13,10 +13,12 @@ export default function FeelingIcon (
   children,
   actionValue,
   placement = "button",
+  disabled = false,
 }: {
   children?: React.ReactNode,
   actionValue: number,
-  placement?: "button" | "display"
+  placement?: "button" | "display",
+  disabled?: boolean
 }
 ) {     
   const theSx = (placement === "display") ? {...displaySx} : {...buttonSx};
@@ -24,13 +26,13 @@ export default function FeelingIcon (
   switch (actionValue) {
     case ActionSegmentFeeling.Bad:
       feelingColor = placement === "display" ? 0 : 0;
-      return <SentimentVeryDissatisfiedIcon sx={{...theSx, color: COLOR_RANGE[feelingColor]}} />;
+      return <SentimentVeryDissatisfiedIcon sx={{...theSx, color: COLOR_RANGE[disabled ? -1 : feelingColor]}} />;
     case ActionSegmentFeeling.Neutral:
       feelingColor = placement === "display" ? 4 : 4;
-      return <SentimentNeutralIcon sx={{...theSx, color: COLOR_RANGE[feelingColor]}} />;
+      return <SentimentNeutralIcon sx={{...theSx, color: COLOR_RANGE[disabled ? -1 : feelingColor]}} />;
     case ActionSegmentFeeling.Good:
       feelingColor = placement === "display" ? 10 : 9;
-      return <MoodIcon sx={{...theSx, color: COLOR_RANGE[feelingColor] }} />;
+      return <MoodIcon sx={{...theSx, color: COLOR_RANGE[disabled ? -1 : feelingColor]}} />;
     default:
       return <QuestionMarkIcon sx={{...theSx}} />;
   }

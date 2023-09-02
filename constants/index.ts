@@ -33,3 +33,4 @@ export const COLOR_RANGE = [
 ];
 
 export const INAPPLICABLE_TIER = -1;
+export const MAX_TIER_SIZE = 99;

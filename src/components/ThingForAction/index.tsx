@@ -7,6 +7,7 @@ import FeelingIcon from "../Icons/FeelingIcon";
 import { getClosestNumber } from "../../../util/math";
 import { COLOR_RANGE, INAPPLICABLE_TIER } from "../../../constants";
 import { getTierCountsFromSegmentType, getTierCountsFromSegmentTypeMatchesActions } from "../../../util/thing";
+import YesNoIcon from "../Icons/YesNoIcon";
 
 const colorForGoal = (thing: IThing) => {
   if (thing.goal === 0) {
@@ -52,6 +53,10 @@ const SummaryOnOffDisplay = (
     thing: IThing,
   }
 ) => {
+  return (
+    <YesNoIcon actionValue={thing.count} placement="display" />
+  )
+
   if (thing.count && thing.count > 0) {
     return (
       <CheckIcon color="success" sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
