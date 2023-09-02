@@ -31,3 +31,5 @@ export const COLOR_RANGE = [
   "#63b859",
   "#2e7d32"
 ];
+
+export const INAPPLICABLE_TIER = -1;

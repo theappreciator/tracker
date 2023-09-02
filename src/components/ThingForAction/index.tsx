@@ -5,8 +5,8 @@ import CloseIcon from '@mui/icons-material/Close';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
 import FeelingIcon from "../Icons/FeelingIcon";
 import { getClosestNumber } from "../../../util/math";
-import { COLOR_RANGE } from "../../../constants";
-import { getTierCountsFromSegmentType } from "../../../util/thing";
+import { COLOR_RANGE, INAPPLICABLE_TIER } from "../../../constants";
+import { getTierCountsFromSegmentType, getTierCountsFromSegmentTypeMatchesActions } from "../../../util/thing";
 
 const colorForGoal = (thing: IThing) => {
   if (thing.goal === 0) {
@@ -111,10 +111,12 @@ const SummarySegmentSize = (
     thing: IThing,
   }
 ) => {
-  const tiers = getTierCountsFromSegmentType(thing);
+  const tiers = getTierCountsFromSegmentTypeMatchesActions(thing);
+  console.log(thing.actions);
+  console.log(tiers);
   return (
     <Typography sx={{ fontSize: "2.5rem", lineHeight: "6rem", textAlign: "right" }} color={colorForGoal(thing)}>
-      {tiers.join('/')}
+      {tiers.filter(t => t !== INAPPLICABLE_TIER).join('/')}
     </Typography>
   )
 }
