@@ -3,6 +3,7 @@ import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, Dialo
 import { useState } from "react";
 import { ActionType, IAction, IThing } from "../../../../types";
 import ThingAction from "../../ThingAction";
+import { getActionsType } from "../../../../util/actions";
 
 export default function ThingActionsDialog(
 {
@@ -22,7 +23,12 @@ export default function ThingActionsDialog(
 
   // const [groupName, setGroupname] = useState('');
   const [isSaving, setSaving] = useState(false);
-  const [selectedActionType, setSelectedActionType] = useState(ActionType.count);
+  const [selectedActionType, setSelectedActionType] = useState(
+    !thing ?
+      ActionType.count :
+      getActionsType(thing.actions) === ActionType.unspecified ?
+        ActionType.count :
+        getActionsType(thing.actions));
   const [hasStateChanged, setHasStateChanged] = useState(false);
   const [actionStates, setActionSates] = useState(actions.reduce((acc, cur) => {
     const isChecked = (thing?.actions.some(t => t.actionId === cur.actionId)) || false;
@@ -117,7 +123,7 @@ export default function ThingActionsDialog(
             size="small"
             color="primary"
           >
-            <ToggleButton selected={selectedActionType === ActionType.count} value={ActionType.count} aria-label="left aligned" onClick={handleToggleCountClick}>
+            <ToggleButton selected={selectedActionType === ActionType.count || selectedActionType === ActionType.unspecified} value={ActionType.count} aria-label="left aligned" onClick={handleToggleCountClick}>
               count
             </ToggleButton>
             <ToggleButton selected={selectedActionType === ActionType.onoff} value={ActionType.onoff} aria-label="centered" onClick={handleToggleOnOffClick}>

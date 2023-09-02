@@ -112,8 +112,6 @@ const SummarySegmentSize = (
   }
 ) => {
   const tiers = getTierCountsFromSegmentTypeMatchesActions(thing);
-  console.log(thing.actions);
-  console.log(tiers);
   return (
     <Typography sx={{ fontSize: "2.5rem", lineHeight: "6rem", textAlign: "right" }} color={colorForGoal(thing)}>
       {tiers.filter(t => t !== INAPPLICABLE_TIER).join('/')}
