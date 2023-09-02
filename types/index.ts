@@ -33,9 +33,23 @@ export type ThingActionRecord = RowDataPacket & {
   type: ActionType;
 }
 
+export enum ActionSegmentFeeling {
+  Bad = 1,
+  Neutral = 1000,
+  Good = 1000000,
+}
+
+export enum ActionSegmentSize {
+  Bad = 1,
+  Neutral = 1000,
+  Good = 1000000,
+}
+
 export enum ActionType {
   count = "count",
   onoff = "onoff",
+  segmentFeeling = "segmentFeeling",
+  segmentSize = "segmentSize",
   unspecified = "unspecified",
 }
 

@@ -1,12 +1,8 @@
 import { LoadingButton } from "@mui/lab";
 import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Box, IconButton, Typography, ButtonGroup, ToggleButtonGroup, ToggleButton, Breadcrumbs, Switch, FormControlLabel } from "@mui/material";
 import { useState } from "react";
-import AddIcon from '@mui/icons-material/Add';
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import { ActionType, IAction, IThing } from "../../../../types";
 import ThingAction from "../../ThingAction";
-
-
 
 export default function ThingActionsDialog(
 {
@@ -126,6 +122,12 @@ export default function ThingActionsDialog(
             <ToggleButton selected={selectedActionType === ActionType.onoff} value={ActionType.onoff} aria-label="centered" onClick={handleToggleOnOffClick}>
               on/off
             </ToggleButton>
+            <ToggleButton selected={selectedActionType === ActionType.segmentFeeling} value={ActionType.segmentFeeling} aria-label="centered" onClick={handleToggleOnOffClick}>
+              Feeling
+            </ToggleButton>
+            <ToggleButton selected={selectedActionType === ActionType.segmentSize} value={ActionType.segmentSize} aria-label="centered" onClick={handleToggleOnOffClick}>
+              Size
+            </ToggleButton>
           </ToggleButtonGroup>
         </Box>
         {actions.filter(a => a.type === selectedActionType).map(action => {
@@ -139,9 +141,7 @@ export default function ThingActionsDialog(
                   thing={thing as IThing} //TODO is this ok?  Do we really want to allow undefined to come in?
                   action={action}
                   color={"primary"}
-                >
-                  {action.name}
-                </ThingAction>
+                />
               </Box>
               
               <FormControlLabel

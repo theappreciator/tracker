@@ -1,8 +1,11 @@
 import { Card, CardHeader, Typography, CardActions, Box } from "@mui/material";
-import { ActionType, IThing } from "../../../types";
+import { ActionSegmentFeeling, ActionType, IAction, IThing } from "../../../types";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
 import DoNotDisturbAltIcon from '@mui/icons-material/DoNotDisturbAlt';
+import FeelingIcon from "../Icons/FeelingIcon";
+import { getClosestNumber } from "../../../util/math";
+import { COLOR_RANGE } from "../../../constants";
 
 const colorForGoal = (thing: IThing) => {
   if (thing.goal === 0) {
@@ -11,24 +14,10 @@ const colorForGoal = (thing: IThing) => {
 
   const percent = Math.min(Math.floor(thing.count / thing.goal * 10), 10);
 
-  const colors = [
-    "#ac1f1f",
-    "#bf3c17",
-    "#d54d3e",
-    "#f46d43",
-    "#fdae61",
-    "#fee08b",
-    "#e3e35f",
-    "#b0d555",
-    "#84bb62",
-    "#63b859",
-    "#2e7d32"
-  ];
-
-  return colors[percent];
+  return COLOR_RANGE[percent];
 }
 
-const CountWithGoals = (
+const SummaryCountWithGoals = (
   {
     children,
     thing,
@@ -53,7 +42,7 @@ const CountWithGoals = (
   )
 }
 
-const OnOffDisplay = (
+const SummaryOnOffDisplay = (
   {
     children,
     thing,
@@ -72,6 +61,74 @@ const OnOffDisplay = (
   )
 }
 
+const getTiersFromSegment = (thing: IThing) => {
+  if (thing.count === 0) {
+    return [0, 0, 0];
+  }
+  const revStr = thing.count.toString().split('').reverse().join('');
+  const tier1 = +(revStr.substring(0,3).split('').reverse().join('')); // 1-999
+  const tier2 = +(revStr.substring(3,6).split('').reverse().join('')); // 1000-999999
+  const tier3 = +(revStr.substring(6,9).split('').reverse().join('')); // 1000000-999999999
+  return [tier1, tier2, tier3];
+}
+
+const getAverageSegmentClamp = (thing: IThing) => {
+  if (thing.count === 0) {
+    return 0;
+  }
+
+  const [tier1, tier2, tier3] = getTiersFromSegment(thing);
+
+  const score = tier1 * 0 + tier2 * 1 + tier3 * 2;
+  const maxScore = (tier1 + tier2 + tier3) * 2;
+  const avg = score / maxScore * 100;
+
+  // TODO this needs to be upated to work for segments other than 3
+  const closest = getClosestNumber(avg, [0, 50, 100]);
+
+  switch (closest) {
+    case 0: 
+      return ActionSegmentFeeling.Bad;
+    case 50:
+      return ActionSegmentFeeling.Neutral;
+    case 100:
+      return ActionSegmentFeeling.Good;
+    default:
+      return 0;
+  }
+};
+
+const SummarySegmentFeeling = (
+  {
+    children,
+    thing,
+  }: {
+    children?: React.ReactNode,
+    thing: IThing,
+  }
+) => {
+  return (
+    <FeelingIcon actionValue={getAverageSegmentClamp(thing)} placement="display" />
+  )
+}
+
+const SummarySegmentSize = (
+  {
+    children,
+    thing,
+  }: {
+    children?: React.ReactNode,
+    thing: IThing,
+  }
+) => {
+  const tiers = getTiersFromSegment(thing);
+  return (
+    <Typography sx={{ fontSize: "2.5rem", lineHeight: "6rem", textAlign: "right" }} color={colorForGoal(thing)}>
+      {tiers.join('/')}
+    </Typography>
+  )
+}
+
 export default function ThingForAction(
 {
   children,
@@ -84,12 +141,18 @@ export default function ThingForAction(
 }
 ) {  
 
-  const getCountDisplay = () => {
+  const getDisplay = () => {
     if (actionType === ActionType.count) {
-      return <CountWithGoals thing={thing} />
+      return <SummaryCountWithGoals thing={thing} />
     }
     else if (actionType === ActionType.onoff) {
-      return <OnOffDisplay thing={thing} />
+      return <SummaryOnOffDisplay thing={thing} />
+    }
+    else if (actionType === ActionType.segmentSize) {
+      return <SummarySegmentSize thing={thing} />
+    }
+    else if (actionType === ActionType.segmentFeeling) {
+      return <SummarySegmentFeeling thing={thing} />
     }
     else {
       return <div>junk</div>
@@ -100,7 +163,7 @@ export default function ThingForAction(
     <Card sx={{ backgroundColor: "#eeeeee" }}>
       <CardHeader
         title={thing.thingName}
-        action={getCountDisplay()}
+        action={getDisplay()}
         subheader={thing.groupName}
       />
       <CardActions>

@@ -6,8 +6,7 @@ import { useGlobalContext } from "../../context";
 import { isEqual } from 'date-fns'
 import { getTodayDateCorrectedForTimezone, isDateStrEqualToToday } from "../../../util/date";
 import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../../constants";
-import action from "../../../pages/api/action";
-import { isActionsCountable, buttonColor } from "../../../util/actions";
+import { getActionsType, buttonColor } from "../../../util/actions";
 
 
 export default function ThingsForGroup(
@@ -69,7 +68,7 @@ export default function ThingsForGroup(
                       <Skeleton animation="wave" height={100}/>
                     )}
                     {!showSkeleton && (
-                      <ThingForAction thing={t} actionType={isActionsCountable(t.actions) ? ActionType.count : ActionType.onoff}>
+                      <ThingForAction thing={t} actionType={getActionsType(t.actions)}>
                         {isDateStrEqualToToday(t.date) && t.actions.map(a => {
                           const actionKey = `action-${t.thingId}-${a.actionId}`;
                           return (

@@ -17,3 +17,17 @@ export const ironSessionCookieOptions: IronSessionOptions = {
 
 export const DEFAULT_USER_LOCALE = 'en-US';
 export const DEFAULT_USER_TIMEZONE = 'America/New_York';
+
+export const COLOR_RANGE = [
+  "#ac1f1f",
+  "#bf3c17",
+  "#d54d3e",
+  "#f46d43",
+  "#fdae61",
+  "#fee08b",
+  "#e3e35f",
+  "#b0d555",
+  "#84bb62",
+  "#63b859",
+  "#2e7d32"
+];

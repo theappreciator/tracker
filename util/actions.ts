@@ -25,9 +25,8 @@ export const buttonColor = (thing: IThing, action: IAction) => {
     }
   }
 
-  export const isActionsCountable = (actions: IAction[]) => {
-    if (actions.every(a => a.type === ActionType.count)) {
-      return true;
-    }
-    return false;
+  export const getActionsType = (actions: IAction[]) => {
+    const type = actions.find(a => true)?.type || ActionType.unspecified;
+    return type
   }
+  

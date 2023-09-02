@@ -2,7 +2,7 @@ import { LoadingButton } from "@mui/lab";
 import { Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions, Button, Select, FormControl, InputLabel, MenuItem, Box } from "@mui/material";
 import { KeyboardEventHandler, useState } from "react";
 
-const SELECT_NULL_ENTRY = "None";
+const SELECT_NULL_ENTRY = "";
 
 export default function GoalInputDialog(
 {
