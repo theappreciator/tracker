@@ -1,12 +1,12 @@
 import { IronSession } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
-import { ironSessionCookieOptions } from "../../../constants";
+import { DEFAULT_DAYS_BACK, ironSessionCookieOptions } from "../../../constants";
 import { getLoggingInUser } from "../../../lib/users";
 import { CookieUser } from "../../../types";
 import { setTimeout } from 'timers/promises'
 import { insertHistoryForThing } from "../../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
-import { getTodayThingsForUser, insertNewThingForUser } from "../../../lib/things";
+import { getThingsForUser, getTodayThingsForUser, insertNewThingForUser } from "../../../lib/things";
 import { getActionsForThings } from "../../../lib/actions";
 import { translateThingRecordToInterface } from "../../../util/translators/group";
 
@@ -33,9 +33,10 @@ async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
     res.status(401).send({});
   }
   else {
-    const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
+    const daysBack = +(typeof req.query.days === "string" ? req.query.days : DEFAULT_DAYS_BACK);
+    const thingRecords = await getThingsForUser(cookiedUser.userId, daysBack);
     const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
-    const things = translateThingRecordToInterface(thingRecords, actionsForThings);
+    const things = translateThingRecordToInterface(thingRecords, actionsForThings, daysBack);
     res.status(200).send(things);
   }
 }

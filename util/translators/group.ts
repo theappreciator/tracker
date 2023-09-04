@@ -3,7 +3,7 @@ import { ActionType, IAction, IDateThingGroup, IThing, IThingGroup, ThingActionR
 import { format, sub } from "date-fns";
 import { format as formatTZ, utcToZonedTime } from "date-fns-tz";
 import { dateThingGroupDescendingSorter, getDateCorrectedForTimezone, getDateStringsInPastXDays, getTodayDateCorrectedForTimezone } from "../date";
-import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../constants";
+import { DEFAULT_DAYS_BACK, DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE } from "../../constants";
 import { groupEnd } from "console";
 
 
@@ -55,10 +55,10 @@ export const translateThingGroupRecordToInterface = (records: ThingGroupRecord[]
     return thingGroups;
 }
 
-export const translateThingRecordToInterface = (records: ThingRecord[], actionsForThings: ThingActionRecord[], fillInDatesSince?: Date): IDateThingGroup[] => {
-  if (!fillInDatesSince) {
-    fillInDatesSince = sub(new Date(), { days: 7 });
-  };
+export const translateThingRecordToInterface = (records: ThingRecord[], actionsForThings: ThingActionRecord[], daysBack?: number): IDateThingGroup[] => {
+  if (!daysBack) {
+    daysBack = DEFAULT_DAYS_BACK;
+  }
 
   // Get all unique groups and things in those groups.
   // The record set may be missing dates, or things for those dates if there were no ThingHistory items for that date, so we are going to fill them in here.
@@ -209,7 +209,7 @@ export const translateThingRecordToInterface = (records: ThingRecord[], actionsF
     .value();
 
     // Fill in missing dates.  This is normal when there is no ThingHistory for this date
-    const allDatesToFill = getDateStringsInPastXDays(7);
+    const allDatesToFill = getDateStringsInPastXDays(daysBack);
     const searchDate = getTodayDateCorrectedForTimezone(DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE);
     // Get today's date in case we need a reference  We know the SQL data will always return full data for today.
     const todayGroupsForReference = dateThingGroups.find(d => d.date === searchDate);

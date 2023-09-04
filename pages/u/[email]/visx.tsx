@@ -1,18 +1,22 @@
 import Layout from '../../../components/layout'
 import { withIronSessionSsr } from "iron-session/next";
-import { ironSessionCookieOptions } from '../../../constants'
+import { DEFAULT_DAYS_BACK, ironSessionCookieOptions } from '../../../constants'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { GlobalContext } from '../../../src/context'
 import { useRouter } from 'next/router'
 import ThingGroupContainer from '../../../src/components/ThingGroupContainer'
-import { IDateThingGroup, IThing } from '../../../types';
-import { Bar } from '@visx/shape';
-import { Group } from '@visx/group';
+import { ActionType, IDateThingGroup, IThing } from '../../../types';
 import { GradientSteelPurple } from '@visx/gradient';
 import letterFrequency, { LetterFrequency } from '@visx/mock-data/lib/mocks/letterFrequency';
 import { scaleBand, scaleLinear, scaleOrdinal } from '@visx/scale';
 import { LegendOrdinal } from "@visx/legend";
 import { scaleThreshold } from '@visx/scale';
+import { GlyphSquare } from '@visx/glyph';
+import { Group } from '@visx/group';
+import { BarGroup } from '@visx/shape';
+import { Bar } from '@visx/shape'
+
+
 
 
 import _ from 'lodash';
@@ -28,6 +32,7 @@ import {
 import {
   TickLabelProps
 } from '@visx/axis';
+import { getQueryParamNumber, getQueryParamString } from '../../../util/query';
 
 const data1 = [
   { x: '2020-01-01', y: 50 },
@@ -54,14 +59,13 @@ const thingGroupAccessors = {
 const purple1 = '#6c5efb';
 const purple2 = '#c998ff';
 const purple3 = '#a44afe';
-const red = 'f00';
-const colorScale = scaleOrdinal<string, string>({
-  domain: ['Squats', 'Pushups', 'Jumping Jacks', 'Lunges'],
-  range: [purple1, purple2, purple3, red],
-});
+const red = '#f00';
+const green = '#0f0';
+const blue = '#00f';
+const pink = '#f0f';
 
-const getThingsAndActions = async (): Promise<IDateThingGroup[]> => {
-  const response = await fetch('/api/thing');
+const getThingsAndActions = async (days: number): Promise<IDateThingGroup[]> => {
+  const response = await fetch(`/api/thing?days=${days}`);
   const things: IDateThingGroup[] = await response.json();
   return things;
 }
@@ -72,11 +76,13 @@ export default function UserVisualizations(
   }
   ) {
     
+    const router = useRouter();
+    const [selectedDays, setSelectedDays] = useState(getQueryParamNumber(router.query.days) || DEFAULT_DAYS_BACK);
     const [thingsAndActions, setThingsAndActions] = useState<IDateThingGroup[]>()
     useEffect(() => {
 
       (async () => {
-        const datesAndThings = await getThingsAndActions();
+        const datesAndThings = await getThingsAndActions(selectedDays);
         setThingsAndActions(datesAndThings);
       })();
 
@@ -87,7 +93,9 @@ export default function UserVisualizations(
     thingsAndActions?.forEach(d => {
       d.groups.forEach(g => {
         g.things.forEach(t => {
-          allTheThings.push(t);
+          if (t.actions.length > 0 && t.actions[0].type === ActionType.count) {
+            allTheThings.push(t);
+          }
         });
       });
     });
@@ -108,47 +116,76 @@ export default function UserVisualizations(
     console.log(groupedAllTheThings);
 
     const width = 600;
-    const height = 600;
+    const height = 400;
     const events = true;
 
 
     const [didFirstLoad, setDidFirstLoad] = useState(false);
     const [dateThingGroups, setDateThingGroups] = useState<IDateThingGroup[]>([]);
     const [needsReload, setNeedsReload] = useState(true);
-    const router = useRouter();
+
+    const colorScaleDualPolar = scaleOrdinal<string, string>({
+      domain: groupedAllTheThings.map(g => g.thingName),
+      range: [
+        "#9fdd98",
+        "#00b89b",
+        "#008dab" ,
+        "#005eac"
+      ]
+    });
+    const threshold = scaleThreshold({
+      domain: [0.02, 0.04, 0.06, 0.08, 0.1],
+      range: ['#f2f0f7', '#dadaeb', '#bcbddc', '#9e9ac8', '#756bb1', '#54278f'],
+    });
 
     const tickLabelProps: TickLabelProps<any> = (tickValue, tickIndex) =>
     ({
-      textAnchor: "start",
-      angle: 45,
+      textAnchor: "end",
+      angle: 315,
+      dx: 3
     } as const);
+
+    const background = '#eaedff';
     
     return (
       <GlobalContext.Provider value={{needsReload, didFirstLoad, setNeedsReload}}>
         <Layout loggedIn>
           <article>
             <div>
-              Your performance past 7 days
+              Your performance past {selectedDays} days
               <hr/>
-              <XYChart height={300} xScale={{ type: 'band' }} yScale={{ type: 'linear' }}>
+              <XYChart
+                height={height}
+                xScale={{ type: 'band' }}
+                yScale={{ type: 'linear' }}
+                margin={{ top: 30, right: 30, bottom: 100, left: 50 }}
+              >
                 <Axis
                   orientation="bottom"
                   tickLabelProps={tickLabelProps}
+                  stroke={'#ccc'}
                 />
-                <Grid columns={false} numTicks={4} />
+                <Grid
+                  columns={false}
+                  numTicks={6}
+                  strokeDasharray={2 as unknown as string}
+                />
                 <Axis
                   orientation="left"
                   numTicks={4}
+                  stroke={'#ccc'}
                 />
                 {groupedAllTheThings.map (g => {
                   return (
-                    <LineSeries key={`line-${g.thingId}`} dataKey={g.thingName} data={g.things} {...thingGroupAccessors} />
+                    <LineSeries
+                      colorAccessor={colorScaleDualPolar}
+                      key={`line-${g.thingId}`}
+                      dataKey={g.thingName}
+                      data={g.things}
+                      {...thingGroupAccessors}
+                    />
                   )
                 })}
-                <LegendOrdinal
-                  scale={colorScale}
-                  direction="row" labelMargin="0 15px 0 0" 
-                />
                 <Tooltip
                   snapTooltipToDatumX
                   snapTooltipToDatumY
@@ -159,11 +196,18 @@ export default function UserVisualizations(
                       <div>
                         {tooltipData?.nearestDatum?.key}
                       </div>
-                      {tooltipData?.nearestDatum?.datum ? (tooltipData?.nearestDatum?.datum as IThing).count : 0}
+                      <div>
+                        {(tooltipData?.nearestDatum?.datum as IThing).date}
+                      </div>
+                      Count: {tooltipData?.nearestDatum?.datum ? (tooltipData?.nearestDatum?.datum as IThing).count : 0}
                     </div>
                   )}
                 />
               </XYChart>
+              <LegendOrdinal
+                  scale={colorScaleDualPolar}
+                  direction="row" labelMargin="0 15px 0 0" 
+                />
             </div>
           </article>
         </Layout>

@@ -27,6 +27,8 @@ export default function ThingGroupContainer(
     dateThingGroups = generateSkeletonDateGroupThings()
   }
 
+  const router = useRouter();
+
   return (
     <>
       {dateThingGroups.map(d => {

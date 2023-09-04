@@ -2313,7 +2313,7 @@
     prop-types "^15.5.10"
     react-use-measure "^2.0.4"
 
-"@visx/axis@3.3.0":
+"@visx/axis@3.3.0", "@visx/axis@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@visx/axis/-/axis-3.3.0.tgz#89df003f7b2e2935cbda091e13f330ce167bdadb"
   integrity sha512-O7fPQtpum4NEsb8u2/eTeOSt8CvAczoehVQbJtDLyDNio6yLvytfHtRKxOsl/FHjFnPYgBjkQtwiKiR5oSjP3g==
@@ -2406,7 +2406,7 @@
     d3-geo "^1.11.3"
     prop-types "^15.5.10"
 
-"@visx/glyph@3.3.0":
+"@visx/glyph@3.3.0", "@visx/glyph@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@visx/glyph/-/glyph-3.3.0.tgz#bea3519d6094e96ea5fd1935030273bcdd8cb32f"
   integrity sha512-U2r1rFLpim3afKuuAmrbxXGSDCaLwXHmjXxWN8PiIQPMxpS7eaa/V5g2TRd/+x0KCkaf3Ismk4VKMl8ZlrmxIQ==
@@ -2418,7 +2418,7 @@
     d3-shape "^1.2.0"
     prop-types "^15.6.2"
 
-"@visx/gradient@3.3.0":
+"@visx/gradient@3.3.0", "@visx/gradient@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@visx/gradient/-/gradient-3.3.0.tgz#c0d0a7435b78053742e61731dae22c7464cd342c"
   integrity sha512-t3vqukahDQsJ64/fcm85woFm2XPpSPMBz92gFvaY4J8EJY3e6rFOg382v5Dm17fgNsLRKJA0Vqo7mUtDe2pWOw==
@@ -2440,7 +2440,7 @@
     classnames "^2.3.1"
     prop-types "^15.6.2"
 
-"@visx/group@3.3.0":
+"@visx/group@3.3.0", "@visx/group@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@visx/group/-/group-3.3.0.tgz#20c1b75c1ab31798c3c702b6f58c412c688a6373"
   integrity sha512-yKepDKwJqlzvnvPS0yDuW13XNrYJE4xzT6xM7J++441nu6IybWWwextyap8ey+kU651cYDb+q1Oi6aHvQwyEyw==
@@ -2548,14 +2548,14 @@
     lodash "^4.17.21"
     prop-types "^15.6.1"
 
-"@visx/scale@3.3.0":
+"@visx/scale@3.3.0", "@visx/scale@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@visx/scale/-/scale-3.3.0.tgz#552e6ee6f6fda22825e49cf7f091d867f9477c9b"
   integrity sha512-H569k7eQEUcFE/X1Zojcb4rUwxurIU4yso21uAuKvXnZcGpDOTr/3YXXHb1JJqOKfLcZtYZWXok6QVDj5ZGtCw==
   dependencies:
     "@visx/vendor" "3.3.0"
 
-"@visx/shape@3.3.0":
+"@visx/shape@3.3.0", "@visx/shape@^3.3.0":
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/@visx/shape/-/shape-3.3.0.tgz#99c58f64edaa1abcd5912db45a3d13ef5efa3a9f"
   integrity sha512-+ojOlcoMnbC16zhwK7HyK4dIB9sUJILQfVNBBNw8TBckCsly+S1WdBKZ+RZvQDppNr2YuiQLsZpr3W9zZJaHtg==

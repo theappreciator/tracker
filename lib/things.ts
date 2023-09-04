@@ -28,7 +28,7 @@ inner join Thing t
 	     and t.thingId in (select thingId from ThingAction)
 inner join ThingHistory th
         on t.thingId = th.thingId
-       and date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL 7 DAY
+       and date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL ? DAY
        and date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
 union all
 select     u.userId,
@@ -97,7 +97,11 @@ AND t.thingId = ?
 `
 
 export async function getTodayThingsForUser(userId: number): Promise<ThingRecord[]> {
-  return db.promise().query<ThingRecord[]>(THINGS_TODAY_SQL, [ userId ])
+  return getThingsForUser(userId, 7);
+}
+
+export async function getThingsForUser(userId: number, numberDaysBack: number): Promise<ThingRecord[]> {
+  return db.promise().query<ThingRecord[]>(THINGS_TODAY_SQL, [ numberDaysBack, userId ])
   .then(async ([rows,fields]) => {
     return rows;
   });
