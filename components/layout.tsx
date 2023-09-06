@@ -3,9 +3,11 @@ import Image from 'next/image'
 import styles from './layout.module.css'
 import utilStyles from '../styles/utils.module.css'
 import Link from 'next/link'
-import { Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField, Typography, useMediaQuery, useTheme } from '@mui/material'
+import { AppBar, Box, Button, Container, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Grid, IconButton, TextField, Toolbar, Typography, useMediaQuery, useTheme } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import SettingsIcon from '@mui/icons-material/Settings';
+import MenuIcon from '@mui/icons-material/Menu';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { title } from 'process'
 import { useEffect, useState } from 'react'
@@ -20,10 +22,12 @@ export const siteDomain = "https://thingtracker.fly.dev";
 
 export default function Layout({
   children,
-  loggedIn
+  loggedIn,
+  backUrl
 }: {
   children: React.ReactNode
-  loggedIn?: boolean
+  loggedIn?: boolean,
+  backUrl?: string
 }) {
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const theme = useTheme();
@@ -69,7 +73,7 @@ export default function Layout({
         onSave={handleSettingsSave}
         onCancel={handleSettingsCancel}
       />
-      <div className={styles.container}>
+      <header className={styles.header}>
         <Head>
           <link rel="icon" href="/favicon.ico" />
           <meta
@@ -94,9 +98,9 @@ export default function Layout({
           <meta name="format-detection" content="telephone=no" />
           <meta name="mobile-web-app-capable" content="yes" />
           <meta name="msapplication-config" content="/icons/browserconfig.xml" />
-          <meta name="msapplication-TileColor" content="#2B5797" />
+          <meta name="msapplication-TileColor" content={theme.palette.secondary.main} />
           <meta name="msapplication-tap-highlight" content="no" />
-          <meta name="theme-color" content="#460368" />
+          <meta name="theme-color" content={theme.palette.primary.main} />
 
           <link rel="apple-touch-icon" href="/icons/touch-icon-iphone.png" />
           <link rel="apple-touch-icon" sizes="152x152" href="/icons/touch-icon-ipad.png" />
@@ -106,7 +110,7 @@ export default function Layout({
           <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
           <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
           <link rel="manifest" href="/manifest.json" />
-          <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#5bbad5" />
+          <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color={theme.palette.secondary.main} />
           <link rel="shortcut icon" href="/favicon.ico" />
 
           <meta name="twitter:card" content="summary" />
@@ -136,27 +140,34 @@ export default function Layout({
           />
 
         </Head>
-        <header className={styles.header}>
-          <Container component="main" maxWidth="lg">
-            <Box
-              sx={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <Typography component="h1" variant="h4">
-                {siteTitle}
-                {loggedIn && (
-                  <IconButton aria-label="delete" size="large" onClick={handleSettingsClick}>
-                    <SettingsIcon fontSize="inherit" />
-                  </IconButton>
-                )}
+        <Box sx={{ flexGrow: 1 }}>
+          <AppBar position="static" color="primary">
+            <Toolbar>
+              {backUrl && (
+                <IconButton
+                  size="large"
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                  href={backUrl}
+                >
+                  <ArrowBackIcon />
+                </IconButton>
+              )}
+              <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                Thing Tracker
               </Typography>
-
-            </Box>
-          </Container>
-        </header>
+              {!backUrl && (
+                <IconButton aria-label="delete" size="large" color="inherit" onClick={handleSettingsClick}>
+                  <SettingsIcon fontSize="inherit" />
+                </IconButton>
+              )}
+            </Toolbar>
+          </AppBar>
+        </Box>
+      </header>
+      <div className={styles.container}>
         <main>{children}</main>
         {loggedIn && (
           <div className={styles.backToHome}>

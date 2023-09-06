@@ -10,7 +10,7 @@ export const buttonColor = (thing: IThing, action: IAction) => {
     return 'error';
   }
 
-  return 'primary'
+  return 'secondary'
 }
 
 export const hasCompleted = (thing: IThing, action: IAction): boolean | undefined=> {

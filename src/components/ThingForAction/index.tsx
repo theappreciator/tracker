@@ -1,5 +1,5 @@
 import styles from './ThingForAction.module.scss';
-import { Card, CardHeader, Typography, CardActions, Box } from "@mui/material";
+import { Card, CardHeader, Typography, CardActions, Box, Theme, useTheme } from "@mui/material";
 import { ActionSegmentFeeling, ActionType, IAction, IThing } from "../../../types";
 import CheckIcon from '@mui/icons-material/Check';
 import CloseIcon from '@mui/icons-material/Close';
@@ -13,9 +13,9 @@ import Link from "next/link";
 import { usePathname } from 'next/navigation'
 
 
-const colorForGoal = (thing: IThing) => {
+const colorForGoal = (theme: Theme, thing: IThing) => {
   if (thing.goal === 0) {
-    return "#333";
+    return theme.palette.grey[900];
   }
 
   const percent = Math.min(Math.floor(thing.count / thing.goal * 10), 10);
@@ -27,19 +27,21 @@ const SummaryCountWithGoals = (
   {
     children,
     thing,
+    theme
   }: {
     children?: React.ReactNode,
     thing: IThing,
+    theme: Theme
   }
 ) => {
   return (
     <>
-      <Typography sx={{ fontSize: "4rem", textAlign: "right" }} color={colorForGoal(thing)}>
+      <Typography sx={{ fontSize: "4rem", textAlign: "right" }} color={colorForGoal(theme, thing)}>
         {thing.count}
       </Typography>
       {thing.goal > 0 && (
-        <Box sx={{ backgroundColor: "#fcc", paddingRight: "0rem", textAlign: "right" }}>
-          <Typography sx={{ fontSize: "1rem", lineHeight: "0rem", textAlign: "right" }} color="#333">
+        <Box sx={{ paddingRight: "0rem", textAlign: "right" }}>
+          <Typography sx={{ fontSize: "1rem", lineHeight: "0rem", textAlign: "right", color: theme.palette.grey[900] }}>
             {`/${thing.goal}`}
           </Typography>
         </Box>
@@ -52,22 +54,15 @@ const SummaryOnOffDisplay = (
   {
     children,
     thing,
+    theme
   }: {
     children?: React.ReactNode,
     thing: IThing,
+    theme: Theme
   }
 ) => {
   return (
     <YesNoIcon actionValue={thing.count} placement="display" />
-  )
-
-  if (thing.count && thing.count > 0) {
-    return (
-      <CheckIcon color="success" sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
-    )
-  }
-  return (
-    <DoNotDisturbAltIcon sx={{ fontSize: "4rem", lineHeight: "1.5rem", marginTop: "1.5rem" }}/>
   )
 }
 
@@ -101,9 +96,11 @@ const SummarySegmentFeeling = (
   {
     children,
     thing,
+    theme
   }: {
     children?: React.ReactNode,
     thing: IThing,
+    theme: Theme
   }
 ) => {
   return (
@@ -115,14 +112,16 @@ const SummarySegmentSize = (
   {
     children,
     thing,
+    theme
   }: {
     children?: React.ReactNode,
     thing: IThing,
+    theme: Theme
   }
 ) => {
   const tiers = getTierCountsFromSegmentTypeMatchesActions(thing);
   return (
-    <Typography sx={{ fontSize: "2.5rem", lineHeight: "6rem", textAlign: "right" }} color={colorForGoal(thing)}>
+    <Typography sx={{ fontSize: "2.5rem", lineHeight: "6rem", textAlign: "right" }} color={colorForGoal(theme, thing)}>
       {tiers.filter(t => t !== INAPPLICABLE_TIER).join('/')}
     </Typography>
   )
@@ -141,19 +140,20 @@ export default function ThingForAction(
 ) {  
 
   const pathname = usePathname()
+  const theme = useTheme();
 
   const getDisplay = () => {
     if (actionType === ActionType.count) {
-      return <SummaryCountWithGoals thing={thing} />
+      return <SummaryCountWithGoals thing={thing} theme={theme} />
     }
     else if (actionType === ActionType.onoff) {
-      return <SummaryOnOffDisplay thing={thing} />
+      return <SummaryOnOffDisplay thing={thing} theme={theme}/>
     }
     else if (actionType === ActionType.segmentSize) {
-      return <SummarySegmentSize thing={thing} />
+      return <SummarySegmentSize thing={thing} theme={theme} />
     }
     else if (actionType === ActionType.segmentFeeling) {
-      return <SummarySegmentFeeling thing={thing} />
+      return <SummarySegmentFeeling thing={thing} theme={theme} />
     }
     else {
       return <div>junk</div>
@@ -162,7 +162,7 @@ export default function ThingForAction(
 
   return (
     <Link className={styles.thingItem} href={`${pathname}/thing/${thing.thingId}`}>
-      <Card sx={{ backgroundColor: "#eeeeee" }}>
+      <Card sx={{ backgroundColor: theme.palette.grey[200] }}>
         <CardHeader
           title={thing.thingName}
           action={getDisplay()}

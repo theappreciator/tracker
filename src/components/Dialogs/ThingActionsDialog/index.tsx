@@ -147,7 +147,7 @@ export default function ThingActionsDialog(
                   key={`action-${action.actionId}`}
                   thing={thing as IThing} //TODO is this ok?  Do we really want to allow undefined to come in?
                   action={action}
-                  color={"primary"}
+                  color={"secondary"}
                 />
               </Box>
               

@@ -16,7 +16,7 @@ export default function ThingAction(
   children?: React.ReactNode,
   thing: IThing,
   action: IAction,
-  color: "success" | "primary" | "error";
+  color: "success" | "primary" | "secondary" | "error";
   onClick?: (thingId: number, count: number) => Promise<void>,
 }
 ) { 
