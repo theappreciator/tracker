@@ -23,7 +23,8 @@ export const getDateStringCorrectedForTimezone = (date: Date, locale: string, ti
   return dateConverted;
 }
 
-export const getTimeStringCorrectedForTimezone = (date: Date, locale: string, timezone: string): string => {
+export const getTimeStringCorrectedForTimezone = (dateStr: string, locale: string, timezone: string): string => {
+  const date = new Date(dateStr);
   const dateConverted = date.toLocaleString(locale, {
     hour: "numeric",
     minute: "numeric",
@@ -31,6 +32,8 @@ export const getTimeStringCorrectedForTimezone = (date: Date, locale: string, ti
     timeZone: timezone,
     hour12: true,
   }); // Need to check if this works after 8p
+
+  console.log(dateStr, '->', date, '->', dateConverted);
 
   return dateConverted;
 }
@@ -41,6 +44,11 @@ export const convertDateStringMmDdYyyyToYyyyMmDd = (mmDdYyyyDateString: string):
   const month = dateConvertedSplit[0];
   const day = dateConvertedSplit[1];
   return `${year}-${month}-${day}`
+}
+
+export const convertDateStringYyyyMmDdToFullNoYear = (dateStr: string) => {
+  const fullDateStr = new Date(dateStr).toLocaleString(DEFAULT_USER_LOCALE, { dateStyle: 'full', timeZone: 'UTC'});
+  return fullDateStr.split(',').slice(0, 2).join(',');
 }
 
 export const isDateStrEqualToToday = (dateStr: string | undefined): boolean => {

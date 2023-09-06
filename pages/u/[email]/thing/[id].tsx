@@ -10,10 +10,9 @@ import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divide
 import InboxIcon from '@mui/icons-material/Inbox';
 import DraftsIcon from '@mui/icons-material/Drafts';
 import { getQueryParamNumber } from '../../../../util/query';
-import { getTimeStringCorrectedForTimezone } from '../../../../util/date';
+import { convertDateStringYyyyMmDdToFullNoYear, getTimeStringCorrectedForTimezone } from '../../../../util/date';
 import AddIcon from '@mui/icons-material/Add';
 import YesNoIcon from '../../../../src/components/Icons/YesNoIcon';
-import format from 'date-fns/format'
 import { generateSkeletonDateGroupThings } from '../../../../util/generators/dateGroupThing';
 
 
@@ -68,12 +67,12 @@ export default function ThingDetailPage(
                       <ListSubheader sx={{ backgroundColor: theme.palette.grey[200], borderRadius: "0.5rem", paddingTop: "0.4rem", paddingBottom: "0.4rem" }}>
                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
                             <Typography sx={{ flexGrow: 1, fontWeight: 700, color:theme.palette.grey[900] }}>
-                              {format(new Date(d.date), 'EEEE, MMMM d')}
+                              {convertDateStringYyyyMmDdToFullNoYear(d.date)}
                             </Typography>
-                          {isCountable && <YesNoIcon actionValue={isSuccess ? 1 : -1} placement="button" />}
+                          {!!(isCountable && goalForDate) && <YesNoIcon actionValue={isSuccess ? 1 : -1} placement="button" />}
                           {isCountable && (
                             <Typography sx={{ fontWeight: 700, color:theme.palette.grey[900] }}>
-                              {totalForDate}/{goalForDate}
+                              {totalForDate}{goalForDate ? `/${goalForDate}` : ''}
                             </Typography>
                           )}
                         </Box>
@@ -86,10 +85,10 @@ export default function ThingDetailPage(
                           <ListItem disablePadding>
                             <ListItem sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
                               <Typography sx={{ flexGrow: 1, color:theme.palette.grey[900] }}>
-                                {`${t.dateTime ? getTimeStringCorrectedForTimezone(new Date(t.dateTime), DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE) : 'n/a'}`}
+                                {`${t.dateTime ? getTimeStringCorrectedForTimezone(t.dateTime, DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE) : 'n/a'}`}
                               </Typography>
                               <Typography>
-                                {t.count}
+                                {t.dateTime ? t.count : ''}
                               </Typography>
                             </ListItem>
                           </ListItem>
