@@ -76,9 +76,6 @@ export default function Example({
   cityScale.rangeRound([0, dateScale.bandwidth()]);
   tempScale.range([yMax, 0]);
 
-  // console.log(thingData);
-  // console.log(data);
-
   return width < 10 ? null : (
     <svg width={width} height={height}>
       <rect x={0} y={0} width={width} height={height} fill={background} rx={14} />
