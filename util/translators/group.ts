@@ -113,7 +113,8 @@ export const translateThingRecordToDateThingGroupInterfaceWithHistory = (records
           .groupBy(v => v.thingId)    
           .flatMap((thingValueArray) => {
             return [...thingValueArray].map(r => {
-              const thing = translateThingRecordToInterface(r, [], dateKey);
+              const actions = translateActionRecordsToInterface(actionsForThings.filter(a => a.thingId === r.thingId));
+              const thing = translateThingRecordToInterface(r, actions, dateKey);
               thing.thingName = thing.thingName;
               return thing;
             });

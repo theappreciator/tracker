@@ -1,3 +1,4 @@
+import styles from './ThingForAction.module.scss';
 import { Card, CardHeader, Typography, CardActions, Box } from "@mui/material";
 import { ActionSegmentFeeling, ActionType, IAction, IThing } from "../../../types";
 import CheckIcon from '@mui/icons-material/Check';
@@ -8,6 +9,9 @@ import { getClosestNumber } from "../../../util/math";
 import { COLOR_RANGE, INAPPLICABLE_TIER } from "../../../constants";
 import { getTierCountsFromSegmentType, getTierCountsFromSegmentTypeMatchesActions } from "../../../util/thing";
 import YesNoIcon from "../Icons/YesNoIcon";
+import Link from "next/link";
+import { usePathname } from 'next/navigation'
+
 
 const colorForGoal = (thing: IThing) => {
   if (thing.goal === 0) {
@@ -136,6 +140,8 @@ export default function ThingForAction(
 }
 ) {  
 
+  const pathname = usePathname()
+
   const getDisplay = () => {
     if (actionType === ActionType.count) {
       return <SummaryCountWithGoals thing={thing} />
@@ -155,15 +161,17 @@ export default function ThingForAction(
   }
 
   return (
-    <Card sx={{ backgroundColor: "#eeeeee" }}>
-      <CardHeader
-        title={thing.thingName}
-        action={getDisplay()}
-        subheader={thing.groupName}
-      />
-      <CardActions>
-        {children}
-      </CardActions>
-    </Card>
+    <Link className={styles.thingItem} href={`${pathname}/thing/${thing.thingId}`}>
+      <Card sx={{ backgroundColor: "#eeeeee" }}>
+        <CardHeader
+          title={thing.thingName}
+          action={getDisplay()}
+          subheader={thing.groupName}
+        />
+        <CardActions>
+          {children}
+        </CardActions>
+      </Card>
+    </Link>
   )
 }

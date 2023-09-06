@@ -23,6 +23,18 @@ export const getDateStringCorrectedForTimezone = (date: Date, locale: string, ti
   return dateConverted;
 }
 
+export const getTimeStringCorrectedForTimezone = (date: Date, locale: string, timezone: string): string => {
+  const dateConverted = date.toLocaleString(locale, {
+    hour: "numeric",
+    minute: "numeric",
+    second: "numeric",
+    timeZone: timezone,
+    hour12: true,
+  }); // Need to check if this works after 8p
+
+  return dateConverted;
+}
+
 export const convertDateStringMmDdYyyyToYyyyMmDd = (mmDdYyyyDateString: string): string => {
   const dateConvertedSplit = mmDdYyyyDateString.split('/');
   const year = dateConvertedSplit[2];

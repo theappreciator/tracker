@@ -13,7 +13,7 @@ const getThingsAndActions = async (): Promise<IDateThingGroup[]> => {
   return things;
 }
 
-export default function UserDashboard(
+export default function UserDashboardPage(
   {
   }: {
   }

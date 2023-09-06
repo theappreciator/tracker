@@ -50,7 +50,8 @@ async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
       else {
         const daysBack = +(typeof req.query.days === "string" ? req.query.days : DAYS_BACK_TODAY_ONLY);
         const thingRecords = await getThingHistoryForUser(cookiedUser.userId, thingId, daysBack);
-        const things = translateThingRecordToDateThingGroupInterfaceWithHistory(thingRecords, [], daysBack, true);
+        const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
+        const things = translateThingRecordToDateThingGroupInterfaceWithHistory(thingRecords, actionsForThings, daysBack, true);
         res.status(200).send(things);      
       }
     }

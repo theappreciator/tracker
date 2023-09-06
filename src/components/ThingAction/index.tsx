@@ -37,7 +37,9 @@ export default function ThingAction(
     }
   }
 
-  const handleClick = async () => {
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    
     if (onClick) {
       setLoading(true);
       await onClick(thing.thingId, action.value);
