@@ -8,6 +8,7 @@ import { LoadingButton } from '@mui/lab'
 import SettingsIcon from '@mui/icons-material/Settings';
 import MenuIcon from '@mui/icons-material/Menu';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import RefreshIcon from '@mui/icons-material/Refresh';
 
 import { title } from 'process'
 import { useEffect, useState } from 'react'
@@ -23,12 +24,15 @@ export const siteDomain = "https://thingtracker.fly.dev";
 export default function Layout({
   children,
   loggedIn,
-  backUrl
+  backUrl,
+  refreshAction
 }: {
   children: React.ReactNode
   loggedIn?: boolean,
-  backUrl?: string
+  backUrl?: string,
+  refreshAction?: () => Promise<void>
 }) {
+  const [isLoading, setIsLoading] = useState(false);
   const [showSettingsDialog, setShowSettingsDialog] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
@@ -64,6 +68,18 @@ export default function Layout({
   
   const handleSettingsCancel = () => {
     setShowSettingsDialog(false);
+  }
+
+  const handleBackClicked = () => {
+    setIsLoading(true);
+  }
+
+  const handleRefreshClicked = async () => {
+    setIsLoading(true);
+    if (refreshAction) {
+      await refreshAction();
+    }
+    setIsLoading(false);
   }
 
   return (
@@ -144,16 +160,29 @@ export default function Layout({
           <AppBar position="static" color="primary">
             <Toolbar>
               {backUrl && (
-                <IconButton
-                  size="large"
-                  edge="start"
+                <LoadingButton
+                  loading={isLoading}
+                  aria-label={"Back"}
+                  variant="text"
                   color="inherit"
-                  aria-label="menu"
-                  sx={{ mr: 2 }}
                   href={backUrl}
+                  sx={{padding: 0, marginLeft: "-1rem" }}
+                  onClick={handleBackClicked}
                 >
                   <ArrowBackIcon />
-                </IconButton>
+                </LoadingButton>
+              )}
+              {!!(!backUrl && refreshAction) && (
+                <LoadingButton
+                  loading={isLoading}
+                  aria-label={"Back"}
+                  variant="text"
+                  color="inherit"
+                  sx={{padding: 0, marginLeft: "-1rem" }}
+                  onClick={handleRefreshClicked}
+                >
+                  <RefreshIcon />
+                </LoadingButton>
               )}
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                 Thing Tracker

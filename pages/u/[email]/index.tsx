@@ -24,6 +24,11 @@ export default function UserDashboardPage(
     const [needsReload, setNeedsReload] = useState(true);
     const router = useRouter();
 
+    const handleRefreshClick = async () => {
+      const newDateThingGroups = await getThingsAndActions();
+      setDateThingGroups(newDateThingGroups);
+    }
+
     useEffect(() => {
       if (needsReload) {
 
@@ -38,7 +43,7 @@ export default function UserDashboardPage(
 
     return (
       <GlobalContext.Provider value={{needsReload, didFirstLoad, setNeedsReload}}>
-        <Layout loggedIn>
+        <Layout loggedIn refreshAction={handleRefreshClick}>
           <article>
             <ThingGroupContainer
               dateThingGroups={dateThingGroups}
