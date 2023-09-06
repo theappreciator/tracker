@@ -1,18 +1,22 @@
 import { IronSession } from "iron-session";
 import { withIronSessionApiRoute } from "iron-session/next";
-import { ironSessionCookieOptions } from "../../../constants";
+import { DAYS_BACK_TODAY_ONLY, DEFAULT_DAYS_BACK, ironSessionCookieOptions } from "../../../constants";
 import { getLoggingInUser } from "../../../lib/users";
 import { CookieUser } from "../../../types";
 import { setTimeout } from 'timers/promises'
 import { insertHistoryForThing } from "../../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
-import { deleteThingForUser, getTodayThingsForUser, updateThingForUser } from "../../../lib/things";
+import { deleteThingForUser, getThingHistoryForUser, getTodayThingsForUser, updateThingForUser } from "../../../lib/things";
 import { getActionsForThings } from "../../../lib/actions";
-import { translateThingRecordToInterface } from "../../../util/translators/group";
+import { translateThingRecordToDateThingGroupInterface, translateThingRecordToDateThingGroupInterfaceWithHistory } from "../../../util/translators/group";
+import { getQueryParamNumber } from "../../../util/query";
 
 export default withIronSessionApiRoute(
   async function thingRoute(req, res) {
     switch (req.method) {
+      case "GET":
+        await doGet(req, res);
+        break;
       case "PUT":
         await doPut(req, res);
         break;
@@ -27,6 +31,31 @@ export default withIronSessionApiRoute(
 
   }, ironSessionCookieOptions,
 );
+
+async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
+  const cookiedUser = req.session.user;
+  if (!cookiedUser) {
+    req.session.destroy();
+    res.status(401).send({});
+  }
+  else {
+    if (typeof req.query.id === 'undefined' || Array.isArray(req.query.id)) {
+      res.status(400).send({});
+    }
+    else {
+      const thingId = getQueryParamNumber(req.query.id);
+      if (typeof thingId === "undefined") {
+        res.status(400).send({});
+      }
+      else {
+        const daysBack = +(typeof req.query.days === "string" ? req.query.days : DAYS_BACK_TODAY_ONLY);
+        const thingRecords = await getThingHistoryForUser(cookiedUser.userId, thingId, daysBack);
+        const things = translateThingRecordToDateThingGroupInterfaceWithHistory(thingRecords, [], daysBack, true);
+        res.status(200).send(things);      
+      }
+    }
+  }
+}
 
 async function doPut(req: NextApiRequest, res: NextApiResponse<any>) {
   const cookiedUser = req.session.user;
@@ -54,7 +83,7 @@ async function doPut(req: NextApiRequest, res: NextApiResponse<any>) {
         else {
           const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
           const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
-          const things = translateThingRecordToInterface(thingRecords, actionsForThings);
+          const things = translateThingRecordToDateThingGroupInterface(thingRecords, actionsForThings);
           res.status(200).send(things);
         }
       }
@@ -81,7 +110,7 @@ async function doDelete(req: NextApiRequest, res: NextApiResponse<any>) {
       else {
         const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
         const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
-        const things = translateThingRecordToInterface(thingRecords, actionsForThings);
+        const things = translateThingRecordToDateThingGroupInterface(thingRecords, actionsForThings);
         res.status(200).send(things);
       }
     }

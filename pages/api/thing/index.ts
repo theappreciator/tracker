@@ -8,7 +8,7 @@ import { insertHistoryForThing } from "../../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getThingsForUser, getTodayThingsForUser, insertNewThingForUser } from "../../../lib/things";
 import { getActionsForThings } from "../../../lib/actions";
-import { translateThingRecordToInterface } from "../../../util/translators/group";
+import { translateThingRecordToDateThingGroupInterface } from "../../../util/translators/group";
 
 export default withIronSessionApiRoute(
   async function thingRoute(req, res) {
@@ -36,7 +36,7 @@ async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
     const daysBack = +(typeof req.query.days === "string" ? req.query.days : DEFAULT_DAYS_BACK);
     const thingRecords = await getThingsForUser(cookiedUser.userId, daysBack);
     const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
-    const things = translateThingRecordToInterface(thingRecords, actionsForThings, daysBack);
+    const things = translateThingRecordToDateThingGroupInterface(thingRecords, actionsForThings, daysBack);
     res.status(200).send(things);
   }
 }
@@ -55,7 +55,7 @@ async function doPost(req: NextApiRequest, res: NextApiResponse<any>) {
       
     const thingRecords = await getTodayThingsForUser(cookiedUser.userId);
     const actionsForThings = await getActionsForThings(thingRecords.map(t => t.thingId));
-    const things = translateThingRecordToInterface(thingRecords, actionsForThings);
+    const things = translateThingRecordToDateThingGroupInterface(thingRecords, actionsForThings);
     res.status(200).send(things);
   }
 }

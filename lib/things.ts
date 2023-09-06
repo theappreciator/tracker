@@ -73,6 +73,44 @@ left join  ThingHistory th
 where      u.userId = ?;
 `
 
+const THING_HISTORY_SQL = `
+select *
+from (
+select 			tg.userId,
+						t.thingId,
+            tg.thingGroupId,
+            tg.name as groupName,
+					  t.name as thingName,
+            DATE_FORMAT(date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
+            CONVERT_TZ(th.time, 'UTC', 'America/New_York') as dateTime,
+            th.change as "count",
+            t.goal
+from		    Thing t
+inner join  ThingGroup tg
+        on  t.thingGroupId = tg.thingGroupId
+inner join	ThingHistory th
+			  on  t.thingId = th.thingId
+			 and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL ? DAY
+       and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
+union 
+select 			tg.userId,
+						t.thingId,
+            tg.thingGroupId,
+            tg.name as groupName,
+					  t.name as thingName,
+						DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
+						CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York') as dateTime,
+            NULL as "count",
+            t.goal
+from		    Thing t
+inner join  ThingGroup tg
+        on  t.thingGroupId = tg.thingGroupId
+) x
+where       x.userId = ?
+       and  x.thingId = ?
+order by    1, 7, 4, 5         
+`
+
 const INSERT_NEW_THING_SQL = `
 insert into Thing values(NULL, ?, 1, ?, ?);
 `
@@ -102,6 +140,13 @@ export async function getTodayThingsForUser(userId: number): Promise<ThingRecord
 
 export async function getThingsForUser(userId: number, numberDaysBack: number): Promise<ThingRecord[]> {
   return db.promise().query<ThingRecord[]>(THINGS_TODAY_SQL, [ numberDaysBack, userId ])
+  .then(async ([rows,fields]) => {
+    return rows;
+  });
+}
+
+export async function getThingHistoryForUser(userId: number, thingId: number, numberDaysBack: number): Promise<ThingRecord[]> {
+  return db.promise().query<ThingRecord[]>(THING_HISTORY_SQL, [ numberDaysBack, userId, thingId ])
   .then(async ([rows,fields]) => {
     return rows;
   });

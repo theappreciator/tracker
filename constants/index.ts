@@ -5,7 +5,9 @@ const THIRTY_DAYS_IN_SECONDS = ONE_DAY_IN_SECONDS * 30;
 const ONE_YEAR_IN_SECONDS = ONE_DAY_IN_SECONDS * 365;
 const EFFECTIVELY_FOREVER_IN_SECONDS = ONE_YEAR_IN_SECONDS * 10;
 
-export const DEFAULT_DAYS_BACK = 7;
+export const DAYS_BACK_TODAY_ONLY = 0;
+export const DAYS_BACK_ONE_WEEK = 7;
+export const DEFAULT_DAYS_BACK = DAYS_BACK_ONE_WEEK;
 
 export const ironSessionCookieOptions: IronSessionOptions = {
   cookieName: "thingtracker",

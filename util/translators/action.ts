@@ -1,15 +1,15 @@
 import { ActionRecord, IAction } from "../../types";
 
 
-export const translateActionRecordToInterface = (records: ActionRecord[]): IAction[] => {
-    const actions: IAction[] = records.map(r => {
-        return {
-            actionId: r.actionId,
-            name: r.name,
-            value: r.value,
-            type: r.type
-        }
-    });
-
-    return actions;
+export const translateActionRecordToInterface = (record: ActionRecord): IAction => {
+  return {
+    actionId: record.actionId,
+    name: record.name,
+    value: record.value,
+    type: record.type
+  }
+}
+export const translateActionRecordsToInterface = (records: ActionRecord[]): IAction[] => {
+  const actions: IAction[] = records.map(r => translateActionRecordToInterface(r));
+  return actions;
 }

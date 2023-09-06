@@ -7,7 +7,7 @@ import { setTimeout } from 'timers/promises'
 import { insertHistoryForThing } from "../../lib/history";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllActions } from "../../lib/actions";
-import { translateActionRecordToInterface } from "../../util/translators/action";
+import { translateActionRecordsToInterface } from "../../util/translators/action";
 
 export default withIronSessionApiRoute(
   async function historyRoute(req, res) {

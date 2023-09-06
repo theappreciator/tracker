@@ -2,7 +2,7 @@ import { withIronSessionApiRoute } from "iron-session/next";
 import { ironSessionCookieOptions } from "../../constants";
 import { NextApiRequest, NextApiResponse } from "next";
 import { getAllActions, updateActionsForThing } from "../../lib/actions";
-import { translateActionRecordToInterface } from "../../util/translators/action";
+import { translateActionRecordsToInterface } from "../../util/translators/action";
 import { setTimeout } from "timers/promises";
 
 export default withIronSessionApiRoute(
@@ -30,7 +30,7 @@ async function doGet(req: NextApiRequest, res: NextApiResponse<any>) {
   }
   else {
     const records = await getAllActions();
-    const actions = translateActionRecordToInterface(records);
+    const actions = translateActionRecordsToInterface(records);
     res.status(200).send(actions);
   }
 }

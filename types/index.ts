@@ -81,6 +81,7 @@ export interface IThing {
   thingName: string;
   groupName: string;
   date?: string;
+  dateTime?: string;
   count: number;
   goal: number;
   actions: IAction[]
