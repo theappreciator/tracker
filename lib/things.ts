@@ -80,7 +80,7 @@ select 		x.userId,
         	x.groupName,
         	x.thingName,
         	coalesce(x.date, x.ref_date) as "date",
-        	coalesce(x.dateTime, x.ref_dateTime) as dateTime,
+        	x.dateTime as dateTime,
         	x.count,
         	x.goal
 from (
@@ -102,6 +102,8 @@ from (
                 on  t.thingId = th.thingId
                and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL ? DAY
                and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
+           where    tg.userId = ?
+               and  t.thingId = ?
 
         union 
 
@@ -119,12 +121,20 @@ from (
         from		    Thing t
         inner join  ThingGroup tg
                 on  t.thingGroupId = tg.thingGroupId
+
+            where   tg.userId = ?
+                and t.thingId = ?
+                and t.thingId not in (
+                                      select 		s_th.thingId
+                                      	from		ThingHistory s_th
+                											where  		s_th.thingId = ?
+               													    and	date(CONVERT_TZ(s_th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL 0 DAY
+               															and date(CONVERT_TZ(s_th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
+                                     )
+
+  
 ) x
-where 		(     x.ref_date is not null and x.ref_date not in (select coalesce(x.date, '1970-01-01'))
-        		or  x.date is not null)
-  		and x.userId = ?
-  		and x.thingId = ?
-order by  1, 7, 4, 5
+order by  1, 7 desc, 4, 5
 `
 
 const INSERT_NEW_THING_SQL = `
@@ -162,7 +172,7 @@ export async function getThingsForUser(userId: number, numberDaysBack: number): 
 }
 
 export async function getThingHistoryForUser(userId: number, thingId: number, numberDaysBack: number): Promise<ThingRecord[]> {
-  return db.promise().query<ThingRecord[]>(THING_HISTORY_SQL, [ numberDaysBack, userId, thingId ])
+  return db.promise().query<ThingRecord[]>(THING_HISTORY_SQL, [ numberDaysBack, userId, thingId, userId, thingId, thingId ])
   .then(async ([rows,fields]) => {
     return rows;
   });
