@@ -33,8 +33,6 @@ export const getTimeStringCorrectedForTimezone = (dateStr: string, locale: strin
     hour12: true,
   }); // Need to check if this works after 8p
 
-  console.log(dateStr, '->', date, '->', dateConverted);
-
   return dateConverted;
 }
 

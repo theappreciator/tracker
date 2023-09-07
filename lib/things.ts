@@ -74,41 +74,57 @@ where      u.userId = ?;
 `
 
 const THING_HISTORY_SQL = `
-select *
+select 		x.userId,
+					x.thingId,
+        	x.thingGroupId,
+        	x.groupName,
+        	x.thingName,
+        	coalesce(x.date, x.ref_date) as "date",
+        	coalesce(x.dateTime, x.ref_dateTime) as dateTime,
+        	x.count,
+        	x.goal
 from (
-select 			tg.userId,
-						t.thingId,
-            tg.thingGroupId,
-            tg.name as groupName,
-					  t.name as thingName,
-            DATE_FORMAT(date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
-            th.time as dateTime,
-            th.change as "count",
-            t.goal
-from		    Thing t
-inner join  ThingGroup tg
-        on  t.thingGroupId = tg.thingGroupId
-inner join	ThingHistory th
-			  on  t.thingId = th.thingId
-			 and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL ? DAY
-       and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
-union 
-select 			tg.userId,
-						t.thingId,
-            tg.thingGroupId,
-            tg.name as groupName,
-					  t.name as thingName,
-						DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
-						current_timestamp() as dateTime,
-            NULL as "count",
-            t.goal
-from		    Thing t
-inner join  ThingGroup tg
-        on  t.thingGroupId = tg.thingGroupId
+        select 			tg.userId,
+                    t.thingId,
+                    tg.thingGroupId,
+                    tg.name as groupName,
+                    t.name as thingName,
+                    DATE_FORMAT(date(CONVERT_TZ(coalesce(th.time, current_timestamp()), 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
+                    coalesce(th.time, current_timestamp()) as dateTime,
+                    NULL as ref_date,
+                    NULL as ref_dateTime,
+                    th.change as "count",
+                    t.goal
+        from		    Thing t
+        inner join  ThingGroup tg
+                on  t.thingGroupId = tg.thingGroupId
+        inner join	ThingHistory th
+                on  t.thingId = th.thingId
+               and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) >= date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) - INTERVAL ? DAY
+               and  date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')) <  date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')) + INTERVAL 1 DAY
+
+        union 
+
+        select 			tg.userId,
+                    t.thingId,
+                    tg.thingGroupId,
+                    tg.name as groupName,
+                    t.name as thingName,
+                    NULL,
+                    NULL,
+                    DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
+                    current_timestamp()as dateTime,
+                    NULL as "count",
+                    t.goal
+        from		    Thing t
+        inner join  ThingGroup tg
+                on  t.thingGroupId = tg.thingGroupId
 ) x
-where       x.userId = ?
-       and  x.thingId = ?
-order by    1, 7, 4, 5         
+where 		(     x.ref_date is not null and x.ref_date not in (select coalesce(x.date, '1970-01-01'))
+        		or  x.date is not null)
+  		and x.userId = ?
+  		and x.thingId = ?
+order by  1, 7, 4, 5
 `
 
 const INSERT_NEW_THING_SQL = `
