@@ -82,7 +82,7 @@ select 			tg.userId,
             tg.name as groupName,
 					  t.name as thingName,
             DATE_FORMAT(date(CONVERT_TZ(th.time, 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
-            CONVERT_TZ(th.time, 'UTC', 'America/New_York') as dateTime,
+            th.time as dateTime,
             th.change as "count",
             t.goal
 from		    Thing t
@@ -99,7 +99,7 @@ select 			tg.userId,
             tg.name as groupName,
 					  t.name as thingName,
 						DATE_FORMAT(date(CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York')), '%Y-%m-%d') as date,
-						CONVERT_TZ(current_timestamp(), 'UTC', 'America/New_York') as dateTime,
+						current_timestamp() as dateTime,
             NULL as "count",
             t.goal
 from		    Thing t
