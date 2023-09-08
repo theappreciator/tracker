@@ -1,11 +1,11 @@
 import Layout from '../../../../components/layout'
 import { withIronSessionSsr } from "iron-session/next";
-import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE, ironSessionCookieOptions } from '../../../../constants'
+import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE, INAPPLICABLE_TIER, ironSessionCookieOptions } from '../../../../constants'
 import { useEffect, useState } from 'react'
 import { GlobalContext } from '../../../../src/context'
 import { useRouter } from 'next/router'
 import ThingGroupContainer from '../../../../src/components/ThingGroupContainer'
-import { ActionType, IDateThingGroup } from '../../../../types';
+import { ActionType, IDateThingGroup, IThing } from '../../../../types';
 import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, ListSubheader, Typography, IconButton, Skeleton, useTheme } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
 import DraftsIcon from '@mui/icons-material/Drafts';
@@ -15,12 +15,58 @@ import AddIcon from '@mui/icons-material/Add';
 import YesNoIcon from '../../../../src/components/Icons/YesNoIcon';
 import { generateSkeletonDateGroupThings } from '../../../../util/generators/dateGroupThing';
 import React from 'react';
+import { getTierCountsFromSegmentType } from '../../../../util/thing';
+import { getActionsType } from '../../../../util/actions';
 
 
 const getThingsAndActions = async (thingId: number): Promise<IDateThingGroup[]> => {
   const response = await fetch(`/api/thing/${thingId}?days=7`);
   const things: IDateThingGroup[] = await response.json();
   return things;
+}
+
+const getCountDisplayForThing = (thing: IThing) => {
+  if (!thing.dateTime) {
+    return '';
+  }
+
+  const actionType = getActionsType(thing.actions);
+  switch (actionType) {
+    case ActionType.count:
+      return thing.count;
+    case ActionType.segmentFeeling:
+      return getDisplayForSegmentType(thing);
+    case ActionType.segmentSize:
+      return getDisplayForSegmentType(thing);
+    case ActionType.onoff:
+      return getDisplayForOnOffType(thing);
+    default:
+      return 'n/a';
+  }
+}
+
+const getDisplayForSegmentType = (thing: IThing) => {
+  const tiers = getTierCountsFromSegmentType(thing);
+  let display: string = '';
+
+  tiers.forEach((t, i) => {
+    if (t !== INAPPLICABLE_TIER) {
+      const tierValue = Math.pow(10, (i * 3));
+      if (tiers[i] > 0) {
+        const foundAction = thing.actions.find(a => a.value === tierValue);
+        if (foundAction) {
+          display = foundAction?.name;
+        }
+      }
+    }
+  });
+
+  return display;
+}
+
+const getDisplayForOnOffType = (thing: IThing) => {
+  const foundAction = thing.actions.find(a => a.value === thing.count);
+  return foundAction?.name;
 }
 
 export default function ThingDetailPage(
@@ -90,7 +136,7 @@ export default function ThingDetailPage(
                               {`${t.dateTime ? getTimeStringCorrectedForTimezone(t.dateTime, DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE) : 'n/a'}`}
                             </Typography>
                             <Typography>
-                              {t.dateTime ? t.count : ''}
+                              {getCountDisplayForThing(t)}
                             </Typography>
                           </ListItem>
                         )}
