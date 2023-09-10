@@ -2,17 +2,6 @@ import { MAX_TIER_SIZE } from "../constants";
 import { IThing, IAction, ActionType } from "../types";
 import { getTierCountsFromSegmentType } from "./thing";
 
-export const buttonColor = (thing: IThing, action: IAction) => {
-  if (false && action.type === ActionType.onoff) {
-    if (hasCompleted(thing, action)) {
-      return 'success';
-    }
-    return 'error';
-  }
-
-  return 'secondary'
-}
-
 export const hasCompleted = (thing: IThing, action: IAction): boolean | undefined=> {
   switch (action.type) {
     case ActionType.onoff:

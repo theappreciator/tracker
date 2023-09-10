@@ -4,7 +4,6 @@ import { DEFAULT_DAYS_BACK, ironSessionCookieOptions } from '../../../constants'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { GlobalContext } from '../../../src/context'
 import { useRouter } from 'next/router'
-import ThingGroupContainer from '../../../src/components/ThingGroupContainer'
 import { ActionType, IDateThingGroup, IThing } from '../../../types';
 import { GradientSteelPurple } from '@visx/gradient';
 import letterFrequency, { LetterFrequency } from '@visx/mock-data/lib/mocks/letterFrequency';
@@ -148,7 +147,6 @@ export default function UserVisualizations(
     const background = '#eaedff';
     
     return (
-      <GlobalContext.Provider value={{needsReload, didFirstLoad, setNeedsReload}}>
         <Layout loggedIn>
           <article>
             <div>
@@ -211,7 +209,6 @@ export default function UserVisualizations(
             </div>
           </article>
         </Layout>
-      </GlobalContext.Provider>
     )
   }
   

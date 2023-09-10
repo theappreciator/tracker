@@ -3,9 +3,9 @@ import { withIronSessionSsr } from "iron-session/next";
 import { ironSessionCookieOptions } from '../../../constants'
 import { useEffect, useState } from 'react'
 import { GlobalContext } from '../../../src/context'
-import { useRouter } from 'next/router'
-import ThingGroupContainer from '../../../src/components/ThingGroupContainer'
 import { IDateThingGroup } from '../../../types';
+import ThingCardContainer from '../../../src/components/ThingCardContainer';
+import { generateSkeletonDateGroupThings } from '../../../util/generators/dateGroupThing';
 
 const getThingsAndActions = async (): Promise<IDateThingGroup[]> => {
   const response = await fetch('/api/thing');
@@ -19,10 +19,12 @@ export default function UserDashboardPage(
   }
   ) {
 
+    const [isInitialLoading, setIsInitialLoading] = useState(false);
+    const [isIncrementalLoading, setIsIncrementalLoading] = useState(false);
+    const [thingIdLoading, setThingIdLoading] = useState<number>();
     const [didFirstLoad, setDidFirstLoad] = useState(false);
     const [dateThingGroups, setDateThingGroups] = useState<IDateThingGroup[]>([]);
     const [needsReload, setNeedsReload] = useState(true);
-    const router = useRouter();
 
     const handleRefreshClick = async () => {
       const newDateThingGroups = await getThingsAndActions();
@@ -33,21 +35,34 @@ export default function UserDashboardPage(
       if (needsReload) {
 
         (async () => {
+          if (!didFirstLoad) {
+            setIsInitialLoading(true);
+          }
+          setIsIncrementalLoading(true);
           const newDateThingGroups = await getThingsAndActions();
           setDateThingGroups(newDateThingGroups);
           setNeedsReload(false);
           setDidFirstLoad(true);
+          setIsIncrementalLoading(false);
+          setIsInitialLoading(false);
+          setThingIdLoading(undefined);
         })();
       }
     }, [needsReload]);
 
+    const displayData = !isInitialLoading ? dateThingGroups : generateSkeletonDateGroupThings(2);
+
     return (
-      <GlobalContext.Provider value={{needsReload, didFirstLoad, setNeedsReload}}>
+      <GlobalContext.Provider value={{isInitialLoading, isIncrementalLoading, needsReload, didFirstLoad, setNeedsReload, thingIdLoading, setThingIdLoading}}>
         <Layout loggedIn refreshAction={handleRefreshClick}>
           <article>
-            <ThingGroupContainer
-              dateThingGroups={dateThingGroups}
-            ></ThingGroupContainer>
+            {displayData.map(d => (
+              <ThingCardContainer
+                key={`date-${d.date}`}
+                date={d.date}
+                thingGroups={d.groups}
+              />
+            ))}
           </article>
         </Layout>
       </GlobalContext.Provider>
