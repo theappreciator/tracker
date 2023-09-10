@@ -1,15 +1,23 @@
 import { createContext, useContext } from 'react';
 
 export type GlobalContent = {
+  isIncrementalLoading: boolean,
+  isInitialLoading: boolean,
   needsReload: boolean,
   didFirstLoad: boolean,
-  setNeedsReload: (b: boolean) => void
+  setNeedsReload: (b: boolean) => void,
+  thingIdLoading?: number,
+  setThingIdLoading: (n?: number) => void,
 }
 
 export const GlobalContext = createContext<GlobalContent>({
+  isIncrementalLoading: false,
+  isInitialLoading: false,
   needsReload: false,
   didFirstLoad: false,
   setNeedsReload: () => {},
+  thingIdLoading: undefined,
+  setThingIdLoading: () => {},
 });
 
 export const useGlobalContext = () => useContext(GlobalContext);
