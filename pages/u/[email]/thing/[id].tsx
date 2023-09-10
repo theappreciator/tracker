@@ -2,16 +2,11 @@ import Layout from '../../../../components/layout'
 import { withIronSessionSsr } from "iron-session/next";
 import { DEFAULT_USER_LOCALE, DEFAULT_USER_TIMEZONE, INAPPLICABLE_TIER, ironSessionCookieOptions } from '../../../../constants'
 import { useEffect, useState } from 'react'
-import { GlobalContext } from '../../../../src/context'
 import { useRouter } from 'next/router'
-import ThingGroupContainer from '../../../../src/components/ThingGroupContainer'
 import { ActionType, IDateThingGroup, IThing } from '../../../../types';
-import { Box, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Divider, ListSubheader, Typography, IconButton, Skeleton, useTheme } from '@mui/material';
-import InboxIcon from '@mui/icons-material/Inbox';
-import DraftsIcon from '@mui/icons-material/Drafts';
+import { Box, List, ListItem, ListSubheader, Typography, Skeleton, useTheme } from '@mui/material';
 import { getQueryParamNumber } from '../../../../util/query';
 import { convertDateStringYyyyMmDdToFullNoYear, getTimeStringCorrectedForTimezone } from '../../../../util/date';
-import AddIcon from '@mui/icons-material/Add';
 import YesNoIcon from '../../../../src/components/Icons/YesNoIcon';
 import { generateSkeletonDateGroupThings } from '../../../../util/generators/dateGroupThing';
 import React from 'react';
