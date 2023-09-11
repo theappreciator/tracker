@@ -20,7 +20,6 @@ export default function UserDashboardPage(
   ) {
 
     const [isInitialLoading, setIsInitialLoading] = useState(false);
-    const [isIncrementalLoading, setIsIncrementalLoading] = useState(false);
     const [thingIdLoading, setThingIdLoading] = useState<number>();
     const [didFirstLoad, setDidFirstLoad] = useState(false);
     const [dateThingGroups, setDateThingGroups] = useState<IDateThingGroup[]>([]);
@@ -38,12 +37,10 @@ export default function UserDashboardPage(
           if (!didFirstLoad) {
             setIsInitialLoading(true);
           }
-          setIsIncrementalLoading(true);
           const newDateThingGroups = await getThingsAndActions();
           setDateThingGroups(newDateThingGroups);
           setNeedsReload(false);
           setDidFirstLoad(true);
-          setIsIncrementalLoading(false);
           setIsInitialLoading(false);
           setThingIdLoading(undefined);
         })();
@@ -53,7 +50,7 @@ export default function UserDashboardPage(
     const displayData = !isInitialLoading ? dateThingGroups : generateSkeletonDateGroupThings(2);
 
     return (
-      <GlobalContext.Provider value={{isInitialLoading, isIncrementalLoading, needsReload, didFirstLoad, setNeedsReload, thingIdLoading, setThingIdLoading}}>
+      <GlobalContext.Provider value={{isInitialLoading, needsReload, didFirstLoad, setNeedsReload, thingIdLoading, setThingIdLoading}}>
         <Layout loggedIn refreshAction={handleRefreshClick}>
           <article>
             {displayData.map(d => (

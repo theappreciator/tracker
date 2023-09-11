@@ -2,7 +2,7 @@ import { IThing } from "../../types";
 import { generateSkeletonActions } from "./action";
 
 export const generateSkeletonThings = (): IThing[] => {
-    const skeletonThings = [1,2,3,4].map(n => {
+    const skeletonThings = [1,2,3].map(n => {
       return {
         thingId: n,
         thingName: `skeleton-${n}`,

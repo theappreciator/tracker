@@ -1,7 +1,6 @@
 import { createContext, useContext } from 'react';
 
 export type GlobalContent = {
-  isIncrementalLoading: boolean,
   isInitialLoading: boolean,
   needsReload: boolean,
   didFirstLoad: boolean,
@@ -11,7 +10,6 @@ export type GlobalContent = {
 }
 
 export const GlobalContext = createContext<GlobalContent>({
-  isIncrementalLoading: false,
   isInitialLoading: false,
   needsReload: false,
   didFirstLoad: false,

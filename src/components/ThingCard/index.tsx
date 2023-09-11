@@ -143,6 +143,31 @@ const SummaryLoading = (
   )
 }
 
+const getDisplay = (thing: IThing, loadingThingId: number | undefined, theme: Theme) => {
+
+  if (typeof loadingThingId !== 'undefined' && loadingThingId === thing.thingId) {
+    return <SummaryLoading theme={theme} />
+  }
+
+  const actionType = getActionsType(thing.actions);
+
+  if (actionType === ActionType.count) {
+    return <SummaryCountWithGoals thing={thing} theme={theme} />
+  }
+  else if (actionType === ActionType.onoff) {
+    return <SummaryOnOffDisplay thing={thing} theme={theme}/>
+  }
+  else if (actionType === ActionType.segmentSize) {
+    return <SummarySegmentSize thing={thing} theme={theme} />
+  }
+  else if (actionType === ActionType.segmentFeeling) {
+    return <SummarySegmentFeeling thing={thing} theme={theme} />
+  }
+  else {
+    return <div>junk</div>
+  }
+};
+
 export default function ThingCard(
 {
   children,
@@ -153,7 +178,7 @@ export default function ThingCard(
 }
 ) {  
 
-  const { setNeedsReload, isInitialLoading, isIncrementalLoading, thingIdLoading, setThingIdLoading } = useGlobalContext();
+  const { setNeedsReload, isInitialLoading, thingIdLoading, setThingIdLoading } = useGlobalContext();
   const [isLoading, setIsLoading] = useState(false);
   const showSkeleton = isInitialLoading;
 
@@ -193,44 +218,19 @@ export default function ThingCard(
       return false;
     });
   };
-
-  const getDisplay = (thing: IThing) => {
-
-    if (thingIdLoading === thing.thingId) {
-      return <SummaryLoading theme={theme} />
-    }
-
-    const actionType = getActionsType(thing.actions);
-
-    if (actionType === ActionType.count) {
-      return <SummaryCountWithGoals thing={thing} theme={theme} />
-    }
-    else if (actionType === ActionType.onoff) {
-      return <SummaryOnOffDisplay thing={thing} theme={theme}/>
-    }
-    else if (actionType === ActionType.segmentSize) {
-      return <SummarySegmentSize thing={thing} theme={theme} />
-    }
-    else if (actionType === ActionType.segmentFeeling) {
-      return <SummarySegmentFeeling thing={thing} theme={theme} />
-    }
-    else {
-      return <div>junk</div>
-    }
-  };
   
   if (thing.actions.length > 0) {
     return (
       <Grid item xs={12} sm={6}>
         {showSkeleton && (
-          <Skeleton animation="wave" height={100}/>
+          <Skeleton className={styles.jesstest} animation="wave" height={"10.4rem"}/>
         )}
         {!showSkeleton && (
           <Link className={styles.thingItem} href={`${pathname}/thing/${thing.thingId}`}>
             <Card sx={{ backgroundColor: theme.palette.grey[200] }}>
               <CardHeader
                 title={thing.thingName}
-                action={getDisplay(thing)}
+                action={getDisplay(thing, thingIdLoading, theme)}
                 subheader={thing.groupName}
               />
               <CardActions>

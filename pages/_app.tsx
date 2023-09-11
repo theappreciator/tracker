@@ -11,6 +11,15 @@ const theme = createTheme({
     secondary: {
       main: '#004B89'
     },
+  },
+  components: {
+    MuiSkeleton: {
+      styleOverrides: {
+        root: {
+          transform: "none",
+        }
+      }
+    }
   }
 });
 

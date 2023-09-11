@@ -87,7 +87,7 @@ export default function ThingDetailPage(
       })();
     }, []);
 
-    const skeletonItems = generateSkeletonDateGroupThings(1);
+    const skeletonItems = generateSkeletonDateGroupThings(2);
     const showSkeleton = isLoading;
 
     const itemsToDisplay = isLoading ? skeletonItems : dateThingGroups;
@@ -104,7 +104,7 @@ export default function ThingDetailPage(
               const isSuccess = goalForDate ? totalForDate >= goalForDate: false;
               return (
                 <nav key={listKey} aria-label={`list for ${d.date}`}>
-                  {showSkeleton && <Skeleton key={listKey+"skeleton"} animation="pulse" width={"15rem"} height={"2.75rem"}/>}
+                  {showSkeleton && <Skeleton key={listKey+"skeleton"} animation="pulse" width={"100%"} height={"2.25rem"} sx={{ marginBottom: "0.5rem" }}/>}
                   {!showSkeleton && (
                     <ListSubheader  sx={{ backgroundColor: theme.palette.grey[200], borderRadius: "0.5rem", paddingTop: "0.4rem", paddingBottom: "0.4rem" }}>
                       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
@@ -124,7 +124,7 @@ export default function ThingDetailPage(
                     const rowKey = `row-${d.date}-${t.thingId}-${i}`
                     return (
                       <React.Fragment key={rowKey}>
-                        {showSkeleton && <Skeleton animation="pulse" width="10rem" height="2rem"/>}
+                        {showSkeleton && <Skeleton animation="pulse" width="10rem" height="1.55rem" sx={{ marginBottom: "0.75rem"}} />}
                         {!showSkeleton && (
                           <ListItem sx={{ display: "flex", alignItems: "center", justifyContent: "flex-start" }}>
                             <Typography sx={{ flexGrow: 1, color:theme.palette.grey[900] }}>
